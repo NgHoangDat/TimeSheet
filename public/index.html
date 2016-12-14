@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta charset="UTF-8">
+  <title>Login Form</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+</head>
+
+<body>
+  <div class="login" id="div1">
+	<h1>Login</h1>
+    <form method="post">
+    	<input type="text" name="u" placeholder="Username" required="required" />
+        <input type="password" name="p" placeholder="Password" required="required" />
+        <button id = "btnLogin" type="button" class="btn btn-primary btn-block btn-large" onclick="login()" data-toggle='modal' data-target='#alertModal'>Login</button>
+    </form>
+</div>
+
+    <script src="assets/js/jquery.js"></script>
+    <script src="js/login.js"></script>
+
+</body>
+</html>
