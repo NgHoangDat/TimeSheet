@@ -205,7 +205,9 @@ angular.module('timesheet').controller('loginCtrl', function ($scope, $http, $lo
 
 angular.module('timesheet').controller('sidebarCtrl', function ($scope, $http, $location, $window) {
     var session = $window.localStorage.getItem('timesheet_user_session');
+    console.log(session);
     if (session != null) {
+        console.log(session.type);
         switch (session.type) {
             case 'admin':
                 $scope.funcs = [{
