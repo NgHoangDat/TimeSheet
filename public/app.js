@@ -203,7 +203,7 @@ angular.module('timesheet').controller('loginCtrl', function ($scope, $http, $lo
     }
 })
 
-angular.module('timesheet').controller('sidebarCtrl', function ($scope, $http, $location, $window) {
+/*angular.module('timesheet').controller('sidebarCtrl', function ($scope, $http, $location, $window) {
     var session = $window.localStorage.getItem('timesheet_user_session');
     console.log(session);
     if (session != null) {
@@ -258,5 +258,11 @@ angular.module('timesheet').controller('sidebarCtrl', function ($scope, $http, $
         }, function errorCallback(response) {
 
         })
+    }
+})*/
+
+angular.module('timesheet').controller('mainCtrl', function ($scope, $http) {
+    $scope.logout = () => {
+        
     }
 })
