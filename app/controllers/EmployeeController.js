@@ -2,6 +2,7 @@ var db = require('orm').db;
 var hat = require('hat');
 var Employees = db.models.employees;
 var Roles = db.models.roles;
+var Roles = db.models.roles;
 var EmployeeController = {};
 var async = require('async');
 
@@ -163,11 +164,24 @@ EmployeeController.get_all_employees = function(req, res) {
             var emps = [];
             async.forEach(employees, function(employee, callback){
 //                delete employee["password"];
+//
+                var role_id = employee.role_id;
                 employee.password = undefined;
-                employee = JSON.parse(JSON.stringify(employee));
-                emps.push(employee);
-                console.log(employee);
-                callback();
+                employee.role_id = undefined;
+
+
+                Roles.one({id: role_id}, function(err, role) {
+                    if (err) {
+                        res.json({ status: "error", message: err });
+                        return;
+                    }
+
+                    employee.user_type = role.name;
+                    employee = JSON.parse(JSON.stringify(employee));
+                    emps.push(employee);
+                    console.log(employee);
+                    callback();
+                });
             }, function(err){
                 if (err) {
                     res.json({ status: "error", message: err });
