@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="timesheet">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Timesheet</title>
+    <link rel="stylesheet" href="bower_components\bootstrap\dist\css\bootstrap.min.css">
+    <link rel="stylesheet" href="bower_components\bootstrap-side-navbar\source\assets\stylesheets\navbar-fixed-side.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="bower_components\jquery\dist\jquery.min.js">
+        
+    </script>
+    <script src="bower_components\bootstrap\dist\js\bootstrap.min.js">
+        
+    </script>
+</head>
+
+<body>
+    <style>
+    th:nth-child(1) {
+        width: 100px;
+    }
+    
+    th:nth-child(2) {
+        width: 150px;
+    }
+    
+    th:nth-child(3) {
+        width: 100px;
+    }
+    
+    th:nth-child(4) {
+        width: 105px;
+    }
+    
+    th:nth-child(5) {
+        width: 120px;
+    }
+    
+    th:nth-child(6) {
+        width: 250px;
+    }
+    
+    th:nth-child(7) {
+        width: 80px;
+    }
+    
+    th:nth-child(8) {
+        width: 60px;
+        text-align: center;
+    }
+    td {
+        overflow: auto;
+    }
+</style>
+<div style="position:relative;height:100vh;left:10%;max-width: 1000px">
+    <div style="margin-bottom:16px">
+        <a class="btn btn-primary" href="">Thêm timesheet mới</a>
+    </div>
+    <div style="margin-bottom:10px">
+        <h4>Timesheet đang chờ duyệt</h4>
+        <table class="table table-hover" style="table-layout:fixed">
+            <tr>
+                <th>Ngày</th>
+                <th>Dự án</th>
+                <th>Giờ bắt đầu</th>
+                <th>Giờ kết thúc</th>
+                <th>Tổng thời gian</th>
+                <th>Mô tả ngắn</th>
+                <th>Hiệu quả</th>
+                <th>#</th>
+            </tr>
+            <tr ng-repeat="timesheet in waiting_timesheets">
+                
+            </tr>
+            
+        </table>
+    </div>
+    <h4>Timesheet đã được duyệt</h4>
+    <div style="margin-bottom:10px">
+        <table class="table table-hover" style="table-layout:fixed">
+            <tr>
+                <th>Ngày</th>
+                <th>Dự án</th>
+                <th>Giờ bắt đầu</th>
+                <th>Giờ kết thúc</th>
+                <th>Tổng thời gian</th>
+                <th>Mô tả ngắn</th>
+                <th>Hiệu quả</th>
+                <th>#</th>
+            </tr>
+            <tr ng-repeat="timesheet in approved_timesheets">
+            </tr>
+        </table>
+    </div>
+</div>
+</body>
+
+</html>

@@ -1,0 +1,120 @@
+{
+    "login": {
+        "req": {
+            "method": "POST",
+            "url": "/employees/sessions",
+            "body": {
+                "username": "",
+                "password": ""
+            }
+        },
+        "res": {
+            "wrong-pass-or-mail": {
+                "status": "success",
+                "message": "Wrong password or username"
+            },
+            "success-login": {
+                "status": "success",
+                "message": {
+                    "id": "",
+                    "type": "",
+                    "token": ""
+                }
+            }
+        }
+    },
+    "logout": {
+        "req": {
+            "method": "DELETE",
+            "url": "",
+            "headers" : {
+                "token" : ""
+            }            
+        },
+        "res" : {
+            "status" : "success",
+            "message" : "Log out success"
+        }
+    },
+    "get-user-info": {
+        "req": {
+            "method" : "GET",
+            "url" : "/employees/info",
+            "headers" : {
+                "token" : ""
+            }
+        },
+        "res": {
+            "status" : "success",
+            "message" : {
+                /*employee*/
+            }
+        }
+    },
+    "user-modify-account" : {
+        "req" : {
+            "method" : "PATCH",
+            "url" : "/employees/modify_account",
+            "headers" : {
+                "token" : ""
+            },
+            "body" : {
+                "name" : "",
+                "sex" : "",
+                "email" : "",
+                "phone" : "",
+                "notes" : ""
+            }
+        },
+        "res" : {
+
+        }
+    },
+    "user-change-pass" : {
+        "req" : {
+            "method" : "POST",
+            "url" : "/employees/change_password",
+            "headers" : {
+                "token" : ""
+            },
+            "body" : {
+                "old_password" : "",
+                "new_password" : ""
+            }
+        },
+        "res" : {
+            "status" : "success",
+            "message" : "Password has changed! Wrong current password"
+        }
+    },
+    "admin-create-account" :  {
+        
+    },
+    "admin-create-project" : {
+
+    },
+    "admin-restore_password" : {
+
+    },
+    "admin-assign-project" : {
+
+    },
+    "get-all-project" : {
+
+    },
+    "project-get-employee" : {
+
+    },
+    "create-timesheet" : {
+
+    },
+    "update-timesheet" : {
+
+    },
+    "get-timesheet-by-id" : {
+
+    },
+    "approve" : {
+
+    }
+}

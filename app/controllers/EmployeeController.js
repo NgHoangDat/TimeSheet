@@ -10,6 +10,8 @@ EmployeeController.login = function(req, res){
     var username = req.body.username;
     var password = req.body.password;
 
+    // console.log(req);
+
     console.log(username);
     console.log(password);
 
@@ -156,7 +158,7 @@ EmployeeController.get_all_employees = function(req, res) {
         if (err) {
             res.json({ status: "error", message: err });
             return;
-        } 
+        }
         if (employees.length > 0) {
             var emps = [];
             async.forEach(employees, function(employee, callback){

@@ -4,6 +4,7 @@ var express = require('express'),
     config = require('./config/config');
 
 // config.db
+//
 
 orm.db = orm.connect(config.db,function(err, db){
   if(err){
@@ -23,6 +24,8 @@ fs.readdirSync(modelsPath).forEach(function (file) {
 });
 
 var app = express();
+
+app.use(express.static(__dirname + '/public'));
 
 require('./config/express')(app, config);
 require('./config/routes')(app);
