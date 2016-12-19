@@ -7,7 +7,7 @@ angular.module('timesheet').controller('userManageCtrl', function ($scope, $wind
             token : session.token
         }
     }).then( function successCallback (response) {
-        // $scope.user
+        $scope.users = response.data.message;
     }, function errorCallback (response) {
 
     })
