@@ -2,7 +2,7 @@ var path = require('path'),
     rootPath = path.normalize(__dirname + '/..'),
 //    env = process.env.NODE_ENV ||
     env = 'development';
-
+1234
 var config = {
   development: {
     root: rootPath,
