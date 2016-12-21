@@ -36,6 +36,7 @@
                     <th>Giới tính</th>
                     <th>Email</th>
                     <th>Phone</th>
+                    <th>#</th>
                 </tr>
                 <tr ng-repeat="user in users">
                     <td>
@@ -49,7 +50,9 @@
                     </td>
                     <td>
                         {{user.phone}}
-                    </td>                                           
+                    </td>
+                    <td id="{{user.id}}">
+                    </td>
                 </tr>
 
             </table>

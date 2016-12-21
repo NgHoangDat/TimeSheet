@@ -261,8 +261,19 @@ angular.module('timesheet').controller('loginCtrl', function ($scope, $http, $lo
     }
 })*/
 
-angular.module('timesheet').controller('mainCtrl', function ($scope, $http) {
+angular.module('timesheet').controller('mainCtrl', function ($scope, $http, $window) {
+    var session= $window.localStorage.getItem('timesheet_user_session');
     $scope.logout = () => {
-        
+        $http({
+            method : 'DELETE',
+            url : '/employees/sessions',
+            headers : {
+                token : session.token
+            }
+        }).then (function successCallback(response){
+            console.log('Dang xuat thanh cong')
+        }, function errorCallback (response) {
+            console.log('Dang xuat fail')
+        })
     }
 })
