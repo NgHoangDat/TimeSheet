@@ -1,6 +1,6 @@
 module.exports = function(app){
 
-    //home route
+    //home route 
     var home = require('../app/controllers/home');
     var EmployeeController = require('../app/controllers/EmployeeController');
     var AdminController = require('../app/controllers/AdminController.js');

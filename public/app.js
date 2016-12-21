@@ -1,14 +1,31 @@
-angular.module('timesheet', []);
+var app = angular.module('timesheet', ['ngRoute', 'ngDialog']);
+const session_name = 'timesheet_user_session';
 
-var host = "http://10.11.40.52:3000/";
-
-angular.module('timesheet', ['ngRoute']).config(function ($routeProvider) {
+function checkType($window, $location, $rootScope, type) {
+    var session = JSON.parse($window.localStorage.getItem(session_name));
+    if (session == null) $location.path('/login');
+    else if (session.type != type) $location.path('/error')
+    else $rootScope.type = type;
+}
+app.config(["ngDialogProvider", function (ngDialogProvider) {
+    ngDialogProvider.setDefaults({
+        className: "ngdialog-theme-default",
+        plain: false,
+        showClose: true,
+        closeByDocument: true,
+        closeByEscape: true,
+        appendTo: false,
+        preCloseCallback: function () {
+            console.log("default pre-close callback");
+        }
+    });
+}]);
+app.config(function ($routeProvider) {
     $routeProvider
         .when('/', {
             resolve: {
                 "redirect": function ($window, $location) {
-                    var session = $window.localStorage.getItem('timesheet_user_session');
-                    console.log(session)
+                    var session = $window.localStorage.getItem(session_name);
                     if (session == null) $location.path('/login');
                     switch (session.type) {
                         case 'admin':
@@ -32,7 +49,7 @@ angular.module('timesheet', ['ngRoute']).config(function ($routeProvider) {
         .when('/login', {
             resolve: {
                 "check": function ($window, $location) {
-                    var session = $window.localStorage.getItem('timesheet_user_session')
+                    var session = $window.localStorage.getItem(session_name)
                     if (session != null) {
                         switch (session.type) {
                             case 'admin':
@@ -54,8 +71,7 @@ angular.module('timesheet', ['ngRoute']).config(function ($routeProvider) {
         .when('/user', {
             resolve: {
                 "check": function ($window, $location, $rootScope) {
-                    var session = $window.localStorage.getItem('timesheet_user_session');
-                    if (session == null) $location.path('/login');
+                    checkType($window, $location, $rootScope, 'user');
                 }
             },
             controller: 'userTimesheetCtrl',
@@ -64,8 +80,7 @@ angular.module('timesheet', ['ngRoute']).config(function ($routeProvider) {
         .when('/user/timesheet', {
             resolve: {
                 "check": function ($window, $location, $rootScope) {
-                    var session = $window.localStorage.getItem('timesheet_user_session');
-                    if (session == null) $location.path('/login');
+                    checkType($window, $location, $rootScope, 'user');
                 }
             },
             controller: 'userTimesheetCtrl',
@@ -74,8 +89,7 @@ angular.module('timesheet', ['ngRoute']).config(function ($routeProvider) {
         .when('/user/info', {
             resolve: {
                 "check": function ($window, $location, $rootScope) {
-                    var session = $window.localStorage.getItem('timesheet_user_session');
-                    if (session == null) $location.path('/login');
+                    checkType($window, $location, $rootScope, 'user');
                 }
             },
             controller: 'userInfoCtrl',
@@ -84,31 +98,16 @@ angular.module('timesheet', ['ngRoute']).config(function ($routeProvider) {
         .when('/user/approve_request', {
             resolve: {
                 "check": function ($window, $location, $rootScope) {
-                    var session = $window.localStorage.getItem('timesheet_user_session');
-                    if (session == null) $location.path('/login');
-
+                    checkType($window, $location, $rootScope, 'user');
                 }
             },
             controller: 'userApproveRequestCtrl',
             templateUrl: 'views/user-approve-request.html'
         })
-        .when('/user/change_password', {
-            resolve: {
-                "check": function ($window, $location, $rootScope) {
-                    var session = $window.localStorage.getItem('timesheet_user_session');
-                    if (session == null) $location.path('/login');
-
-                }
-            },
-            controller: 'userChangePasswordCtrl',
-            templateUrl: 'views/user-password-change.html'
-        })
         .when('/admin', {
             resolve: {
                 "check": function ($window, $location, $rootScope) {
-                    var session = $window.localStorage.getItem('timesheet_user_session');
-                    if (session == null) $location.path('/login');
-
+                    checkType($window, $location, $rootScope, 'admin')
                 }
             },
             controller: 'userManageCtrl',
@@ -117,9 +116,7 @@ angular.module('timesheet', ['ngRoute']).config(function ($routeProvider) {
         .when('/admin/manage_users', {
             resolve: {
                 "check": function ($window, $location, $rootScope) {
-                    var session = $window.localStorage.getItem('timesheet_user_session');
-                    if (session == null) $location.path('/login');
-
+                    checkType($window, $location, $rootScope, 'admin')
                 }
             },
             controller: 'userManageCtrl',
@@ -128,9 +125,7 @@ angular.module('timesheet', ['ngRoute']).config(function ($routeProvider) {
         .when('/admin/manage_projects', {
             resolve: {
                 "check": function ($window, $location, $rootScope) {
-                    var session = $window.localStorage.getItem('timesheet_user_session');
-                    if (session == null) $location.path('/login');
-
+                    checkType($window, $location, $rootScope, 'admin')
                 }
             },
             controller: 'projectManageCtrl',
@@ -139,9 +134,7 @@ angular.module('timesheet', ['ngRoute']).config(function ($routeProvider) {
         .when('/admin/manage_timesheets', {
             resolve: {
                 "check": function ($window, $location, $rootScope) {
-                    var session = $window.localStorage.getItem('timesheet_user_session');
-                    if (session == null) $location.path('/login');
-
+                    checkType($window, $location, $rootScope, 'admin')
                 }
             },
             controller: 'timesheetManageCtrl',
@@ -150,9 +143,7 @@ angular.module('timesheet', ['ngRoute']).config(function ($routeProvider) {
         .when('/admin/manage_approvers', {
             resolve: {
                 "check": function ($window, $location, $rootScope) {
-                    var session = $window.localStorage.getItem('timesheet_user_session');
-                    if (session == null) $location.path('/login');
-
+                    checkType($window, $location, $rootScope, 'admin')
                 }
             },
             controller: 'approverManageCtrl',
@@ -163,7 +154,7 @@ angular.module('timesheet', ['ngRoute']).config(function ($routeProvider) {
         })
 })
 
-angular.module('timesheet').controller('loginCtrl', function ($scope, $http, $location, $window) {
+angular.module('timesheet').controller('loginCtrl', function ($scope, $http, $location, $window, $rootScope) {
     $scope.submit = () => {
         $http({
             method: 'POST',
@@ -184,7 +175,8 @@ angular.module('timesheet').controller('loginCtrl', function ($scope, $http, $lo
                     type: response.data.message.type,
                     token: response.data.message.token
                 }
-                $window.localStorage.setItem('timesheet_user_session', JSON.stringify(session));
+                $window.localStorage.setItem(session_name, JSON.stringify(session));
+                $rootScope.type = session.type;
                 switch (session.type) {
                     case 'admin':
                         $location.path('/admin')
@@ -203,66 +195,9 @@ angular.module('timesheet').controller('loginCtrl', function ($scope, $http, $lo
     }
 })
 
-/*angular.module('timesheet').controller('sidebarCtrl', function ($scope, $http, $location, $window) {
-    var session = $window.localStorage.getItem('timesheet_user_session');
-    console.log(session);
-    if (session != null) {
-        console.log(session.type);
-        switch (session.type) {
-            case 'admin':
-                $scope.funcs = [{
-                    text: 'Timesheet',
-                    href: '#!/user/timesheet'
-                }, {
-                    text: 'Thông tin tài khoản',
-                    href: '#!/user/info'
-                }, {
-                    text: 'Yêu cầu xác nhận',
-                    href: '#!/user/approve_request'
-                }];
-                break;
-            case 'user':
-                $scope.funcs = [{
-                    text: 'Quản lý người dùng',
-                    href: '#!/admin/manage_users'
-                }, {
-                    text: 'Quản lý dự án',
-                    href: '#!/admin/manage_projects'
-                }, {
-                    text: 'Quản lý timesheet',
-                    href: '#!/admin/manage_timesheets'
-                }, {
-                    text: 'Quản lý approver',
-                    href: '#!/admin/manage_approvers'
-                }];
-                break;
-            default:
-                $scope.funcs = [];
-                break;
-        }
-        $scope.showLogoutOption = true;
-    } else {
-        $scope.funcs = [];
-        $scope.showLogoutOption = false;
-    }
-    $scope.logout = () => {
-        $http({
-            method: "DELETE",
-            url: "/employees/sessions",
-            headers: {
-                token: session.token
-            }
-        }).then(function successCallback(response) {
-            $window.localStorage.removeItem('timesheet_user_session')
-            $location.path('/')
-        }, function errorCallback(response) {
-
-        })
-    }
-})*/
 
 angular.module('timesheet').controller('mainCtrl', function ($scope, $http) {
     $scope.logout = () => {
-        
+
     }
 })

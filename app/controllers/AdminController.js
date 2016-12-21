@@ -26,7 +26,7 @@ AdminController.create_account = function(req, res) {
 
     Employees.create(newAccount, function(err, employee){
         if(err) {
-            res.json({ status: "error", message: err });
+            res.json({ status: "error", message: err});
             return;
         }
         res.json({ status: "success", message: "Create new account success!"});
@@ -49,7 +49,7 @@ AdminController.create_project = function(req, res) {
             return;
         }
         
-        res.json({ status: "success", message: "Create new project success!"});
+        res.json({ status: "success", message: "Create new project success!", project : project});
 
     });
 }

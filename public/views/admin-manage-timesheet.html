@@ -1,10 +1,75 @@
-<div style="position:relative;height:100vh;left:10%">
-    <table>
-        <th>
-
-        </th>
-        <td ng-repeat="timesheet in submited_timesheets">
-
-        </td>
-    </table>
+<style>
+    th:nth-child(1) {
+        width: 150px;
+    }
+    
+    th:nth-child(2) {
+        width: 100px;
+    }
+    
+    th:nth-child(3) {
+        width: 100px;
+    }
+    
+    th:nth-child(4) {
+        width: 105px;
+    }
+    
+    th:nth-child(5) {
+        width: 120px;
+    }
+    
+    th:nth-child(6) {
+        width: 80px;
+    }
+    th:nth-child(7) {
+        width: 300px;
+    }    
+    td {
+        overflow: auto;
+    }
+</style>
+<div style="position:relative;height:100vh;left:10%;max-width: 1000px">
+    <div style="margin-bottom:16px">
+        <a class="btn btn-primary" href="">Thêm timesheet mới</a>
+    </div>
+    <div style="margin-bottom:10px">
+        <h4>Timesheet đang chờ duyệt</h4>
+        <table class="table table-hover" style="table-layout:fixed">
+            <tr>
+                <th>Nhân viên</th>
+                <th>Ngày</th>
+                <th>Dự án</th>
+                <th>Tổng thời gian</th>
+                <th>Mô tả ngắn</th>
+                <th>Hiệu quả</th>
+                <th>#</th>
+            </tr>
+            <tr ng-repeat="timesheet in timesheets">
+                <td>
+                    {{timesheet.employeeName}}
+                </td>
+                <td>
+                    {{timesheet.working_date}}
+                </td>
+                <td>
+                    {{timesheet.project}}
+                </td>
+                <td>
+                    {{timesheet.working_hours}}
+                </td>
+                <td>
+                    {{timesheet.description}}
+                </td>
+                <td>
+                    {{timesheet.efficiency}}
+                </td>
+                <td style="text-align: center; padding-top: 0px;align-items: center; display: flex">
+                    <a id="{{timesheet.id}}" class="btn btn-link" ng-click="showDetail(id)">Chi tiết</a>
+                    <a id="{{timesheet.id}}" class="btn btn-link" ng-click="approve(id)">Duyệt</a>
+                    <a id="{{timesheet.id}}" class="btn btn-link" ng-click="reqApprove(id)">Yêu cầu duyệt lại</a>
+                </td>
+            </tr>
+        </table>
+    </div>
 </div>

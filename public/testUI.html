@@ -16,84 +16,61 @@
 </head>
 
 <body>
-    <style>
-    th:nth-child(1) {
-        width: 100px;
-    }
-    
-    th:nth-child(2) {
-        width: 150px;
-    }
-    
-    th:nth-child(3) {
-        width: 100px;
-    }
-    
-    th:nth-child(4) {
-        width: 105px;
-    }
-    
-    th:nth-child(5) {
-        width: 120px;
-    }
-    
-    th:nth-child(6) {
-        width: 250px;
-    }
-    
-    th:nth-child(7) {
-        width: 80px;
-    }
-    
-    th:nth-child(8) {
-        width: 60px;
-        text-align: center;
-    }
-    td {
-        overflow: auto;
-    }
-</style>
-<div style="position:relative;height:100vh;left:10%;max-width: 1000px">
-    <div style="margin-bottom:16px">
-        <a class="btn btn-primary" href="">Thêm timesheet mới</a>
+    <div style="position:relative;height:100vh">
+        <div style="position:absolute;top:0px;left:20%;">
+            <form style="margin-left:40px;width:100vh" action="/">
+                <div class="form-group">
+                    <label for="name">Họ tên</label>
+                    <input class="form-control" type="text" name="name" ng-model="info.name">
+                </div>
+                <div class="form-group">
+                    <div class="form-inline">
+                        <label for="gender" style="margin-right: 16px">Giới tính</label>
+                        <input type="radio" name="sex" value="male" ng-model="info.sex">
+                        <label for="gender" style="margin:0px 20px 0px 10px">Nam</label>
+                        <input type="radio" name="sex" value="female" ng-model="info.sex">
+                        <label for="gender" style="margin:0px 20px 0px 10px">Nữ</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input class="form-control" type="email" name="email" ng-model="info.email">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Số điện thoại</label>
+                    <input class="form-control" type="tel" name="phone" ng-model="info.phone">
+                </div>
+                <div class="form-group">
+                    <label for="role">Chức vụ</label>
+                    <input class="form-control" type="text" name="role" ng-model="info.role">
+                </div>
+                <div class="form-group clearfix">
+                    <button class="btn btn-default pull-right" style="margin-left:10px" type="button" ng-click="cancel()">Hủy</button>
+                    <button class="btn btn-primary pull-right" style="margin-left:10px" type="button" ng-click="saveChange()">Lưu thay đổi</button>
+                </div>
+                <a href="#change" data-toggle="collapse">Thay đổi mật khẩu</a>
+                <div id="change" class="collapse">
+                    <p>
+                        <h4>Đổi mật khẩu</h4>
+                    </p>
+                    <p>
+                        <label for="oldPassword">Mật khẩu cũ</label>
+                        <input type="password" class="form-control" name="oldPassword" placeholder="password" ng-model="old">
+                    </p>
+                    <p>
+                        <label for="newPassword">Mật khẩu mới</label>
+                        <input type="password" class="form-control" name="newPassword" placeholder="password" ng-model="new">
+                    </p>
+                    <p>
+                        <div class="form-group clearfix">
+                            <button class="btn btn-default pull-right" style="margin-right:0px" type="button" ng-click="cancelPasswordChange()">Hủy</button>
+                            <button class="btn btn-primary pull-right" style="margin-right:8px" type="button" ng-click="savePasswordChange()">Đổi mật khẩu</button>
+                        </div>
+                    </p>
+                </div>
+            </form>
+        </div>
     </div>
-    <div style="margin-bottom:10px">
-        <h4>Timesheet đang chờ duyệt</h4>
-        <table class="table table-hover" style="table-layout:fixed">
-            <tr>
-                <th>Ngày</th>
-                <th>Dự án</th>
-                <th>Giờ bắt đầu</th>
-                <th>Giờ kết thúc</th>
-                <th>Tổng thời gian</th>
-                <th>Mô tả ngắn</th>
-                <th>Hiệu quả</th>
-                <th>#</th>
-            </tr>
-            <tr ng-repeat="timesheet in waiting_timesheets">
-                
-            </tr>
-            
-        </table>
-    </div>
-    <h4>Timesheet đã được duyệt</h4>
-    <div style="margin-bottom:10px">
-        <table class="table table-hover" style="table-layout:fixed">
-            <tr>
-                <th>Ngày</th>
-                <th>Dự án</th>
-                <th>Giờ bắt đầu</th>
-                <th>Giờ kết thúc</th>
-                <th>Tổng thời gian</th>
-                <th>Mô tả ngắn</th>
-                <th>Hiệu quả</th>
-                <th>#</th>
-            </tr>
-            <tr ng-repeat="timesheet in approved_timesheets">
-            </tr>
-        </table>
-    </div>
-</div>
 </body>
 
 </html>

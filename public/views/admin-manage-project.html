@@ -1,10 +1,52 @@
-<div style="position:relative;height:100vh;left:10%">
-    <table>
-        <th>
-
-        </th>
-        <td ng-repeat="project in projects">
-
-        </td>
-    </table>
+<style>
+    th:nth-child(4) {
+        text-align: center
+    }
+    td {
+        overflow: auto
+    }
+</style>
+<div class="" style="padding:20px">
+    <p>
+        <form class="form-inline">
+            <div class="form-group">
+                <label class="sr-only" for="exampleInputAmount">Them nguou dung</label>
+                <div class="input-group">
+                    <div class="input-group-addon">Thêm dự án</div>
+                    <div class="form-inline">
+                        <input type="text" class="form-control" ng-model="project_name" placeholder="Tên dự án">
+                        <select class="form-control" ng-model="leader_id" style="width:250px">
+                            <option ng-repeat="user in users" value="{{user.id}}">{{user.name}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn" ng-click="addDetail()">Thêm chi tiết dự án</button>
+            <button type="button" class="btn btn-primary" ng-click="addNewProject()">Submit</button>
+        </form>
+    </p>
+    <div>
+        <table class="table table-hover" style="table-layout:fixed">
+            <tr>
+                <th>Tên dự án</th>
+                <th>Mô tả</th>
+                <th>Trưởng dự án</th>
+                <th>#</th>
+            </tr>
+            <tr ng-repeat="project in projects track by $index">
+                <td>
+                    {{project.name}}
+                </td>
+                <td>
+                    {{project.description}}
+                </td>
+                <td>
+                    {{project.leader_name}}
+                </td>
+                <td style="text-align: center; padding-top: 0px;align-items: center;">
+                    <a class="btn btn-link" ng-click="showDetail(project.id)">Thêm thành viên dự án</a>   
+                </td>
+            </tr>
+        </table>
+    </div>
 </div>
