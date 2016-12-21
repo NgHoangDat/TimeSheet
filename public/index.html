@@ -7,7 +7,26 @@
     <link rel="stylesheet" href="bower_components\bootstrap\dist\css\bootstrap.min.css">
     <link rel="stylesheet" href="bower_components\bootstrap-side-navbar\source\assets\stylesheets\navbar-fixed-side.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="bower_components\ng-dialog\css\ngDialog.min.css">
+    <link rel="stylesheet" href="bower_components\ng-dialog\css\ngDialog-theme-default.min.css">
+    <style>
+        #sidebar[data-type=""] > nav {
+            display: none;
+        }
+        #sidebar[data-type="admin"] nav:nth-child(1) {
+            display: block;
+        }
+        #sidebar[data-type="admin"] nav:nth-child(2) {
+            display: none;
+        }
+        #sidebar[data-type="user"] nav:nth-child(1) {
+            display: none;            
+        }
+        #sidebar[data-type="user"] nav:nth-child(2) {
+            display: block;
+        }
 
+    </style>
 </head>
 
 <body>
@@ -21,18 +40,65 @@
                     <li><a href="#about">About</a></li>
                 </ul>
             </div>
-            <!--/.nav-collapse -->
         </div>
     </nav>
-    <div class="container-fluid" style="padding:50px 40px 0px 0px" ng-controller="mainCtrl">
-        <div ng-view>
-            
+    <div class="container-fluid" style="padding:50px 40px 0px 0px">
+        <div class="row">
+            <div id="sidebar" class="col-sm-3 col-lg-2" data-type="{{type}}">
+                <nav class="navbar navbar-default navbar-fixed-side" style="padding:20px">
+                    <!-- normal collapsible navbar markup -->
+                    <div class="collapse navbar-collapse">
+                        <ul class="nav navbar-nav">
+                            <li>
+                                <a href="">Quản lý người dùng</a>
+                            </li>
+                            <li>
+                                <a href="">Quản lý timesheet</a>
+                            </li>
+                            <li>
+                                <a href="">Quản lý approver</a>
+                            </li>
+                            <li>
+                                <a href="">Quản lý dự án</a>
+                            </li>
+                            <li>
+                                <a href="">Đăng xuất</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+                <nav class="navbar navbar-default navbar-fixed-side" style="padding:20px">
+                    <!-- normal collapsible navbar markup -->
+                    <div class="collapse navbar-collapse">
+                        <ul class="nav navbar-nav">
+                            <li>
+                                <a href="">Timesheet</a>
+                            </li>
+                            <li>
+                                <a href="">Thông tin tài khoản</a>
+                            </li>
+                            <li>
+                                <a href="">Yêu cầu approve</a>
+                            </li>
+                            <li>
+                                <a href="">Đăng xuất</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+            <div class="col-sm-9 col-lg-10" style="padding:20px">
+                <!-- your page content -->
+                <div ng-view>
+                </div>
+            </div>
         </div>
     </div>
-    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/angular-route/angular-route.js"></script>
-    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="bower_components\ng-dialog\js\ngDialog.min.js"></script>
     <script src="app.js"></script>
     <script src="controller/admin-ctrl.js"></script>
     <script src="controller/user-ctrl.js"></script>
