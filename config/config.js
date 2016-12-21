@@ -10,7 +10,7 @@ var config = {
       name: 'timesheet'
     },
     port: 3000,
-    db: 'mysql://root:1234@localhost:3306/timesheet'
+    db: 'mysql://root:vubinhne@localhost:3306/timesheet'
   },
 
   test: {
