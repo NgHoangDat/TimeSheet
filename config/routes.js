@@ -1,6 +1,6 @@
 module.exports = function(app){
 
-    //home route 
+    //home route
     var home = require('../app/controllers/home');
     var EmployeeController = require('../app/controllers/EmployeeController');
     var AdminController = require('../app/controllers/AdminController.js');
@@ -27,6 +27,9 @@ module.exports = function(app){
     app.post('/timesheets', TimesheetController.create_timesheet);
     app.patch('/timesheets', TimesheetController.update_timesheet);
     app.get('/timesheets/:user_id', TimesheetController.get_timesheets_by_user_id);
-    
+    app.get('/get_unapprove_timesheets', TimesheetController.get_unapprove_timesheets);
+
     app.post('/approvers/approve', ApproverController.approve);
+    app.get('/approvers/get_all_approvers', ApproverController.get_all_approver);
+    app.get('/approvers/get_approve_record/:timesheet_id', ApproverController.get_approve_record_by_timesheet_id);
 };
