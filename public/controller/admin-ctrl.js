@@ -90,7 +90,7 @@ angular.module('timesheet').controller('projectManageCtrl', function ($scope, $w
         ngDialog.open({
             template: 'views/admin-manage-project-add-detail.html',
             className: 'ngdialog-theme-default',
-            width: 500,
+            width: 520,
             controller: 'addProjectDetailCtrl',
             scope: $scope,
             data: {
@@ -144,11 +144,11 @@ angular.module('timesheet').controller('projectManageCtrl', function ($scope, $w
         ngDialog.open({
             template: 'views/admin-manage-project-show-detail.html',
             className: 'ngdialog-theme-default',
-            width: 500,
+            width: 520,
             controller: 'showProjectDetailCtrl',
             data: {
-                project : project,
-                users : $scope.users
+                project: project,
+                users: $scope.users
             }
         });
     }
@@ -165,7 +165,13 @@ angular.module('timesheet').controller('addProjectDetailCtrl', function ($scope,
             return e.id == $scope.employee_id;
         })
         if (next != undefined) $scope.project_employees.push(next);
-    }
+    },
+    $scope.delete = (id) => {
+        var tar = $scope.users.find((e) => {
+            return e.id == id;
+        })
+        $scope.project_employees.splice($scope.project_employees.indexOf(tar), 1)
+    }    
     $scope.addProject = () => {
         if ($scope.project_name == undefined || $scope.leader_id == undefined || $scope.project_name == '') alert('Bạn phải nhập tên dự án và tên trưởng dự án')
         else {
@@ -217,6 +223,7 @@ angular.module('timesheet').controller('addProjectDetailCtrl', function ($scope,
                         })
                     })
                 }
+                $scope.closeThisDialog();
             }, function errorCallback(response) {
                 console.log(response)
             })
@@ -229,20 +236,53 @@ angular.module('timesheet').controller('showProjectDetailCtrl', function ($scope
     $scope.project_name = project.name;
     $scope.project_description = project.description;
     $scope.project_leader = project.leader_name;
-    $scope.users = $scope.ngDialog.users;
+    $scope.users = $scope.ngDialogData.users;
     $scope.new_project_employees = [];
-    $http ({
-        method : 'POST',
-        url : '/projects/get_employees',
-        data : {
-            project_id : project.id
+    $http({
+        method: 'POST',
+        url: '/projects/get_employees',
+        data: {
+            project_id: project.id
         }
-    }).then ( function successCallback (response) {
-        $scope.project_employees = response.data.message;
-    }, function errorCallback (response) {
+    }).then(function successCallback(response) {
+        if (response.data.message == 'Not found any employees!') $scope.project_employees = []
+        else $scope.project_employees = response.data.message;
+        console.log(response.data.message)
+    }, function errorCallback(response) {
         console.log(response)
     })
-    
+    $scope.addEmployee = () => {
+        var next = $scope.users.find((e) => {
+            return e.id == $scope.employee_id;
+        })
+        if (next != undefined && $scope.new_project_employees.indexOf(next) == -1 && $scope.project_employees.find((e) => {
+            return e.id == $scope.employee_id;
+        }) == undefined) $scope.new_project_employees.push(next);
+    }
+    $scope.delete = (id) => {
+        var tar = $scope.users.find((e) => {
+            return e.id == id;
+        })
+        $scope.new_project_employees.splice($scope.new_project_employees.indexOf(tar), 1)
+    }
+    $scope.saveChange = () => {
+        $scope.new_project_employees.forEach((e) => {
+            $http({
+                method: 'POST',
+                url: '/admins/assign_project',
+                data: {
+                    employee_id: e.id,
+                    project_id: project.id,
+                    notes: ''
+                }
+            }).then(function successCallback(response) {
+                console.log(response)
+                $scope.closeThisDialog('Them nhan vien');
+            }, function errorCallback(response) {
+                console.log(response)
+            })
+        })
+    }
 })
 
 angular.module('timesheet').controller('timesheetManageCtrl', function ($scope, $window, $http, $location) {
@@ -307,5 +347,5 @@ angular.module('timesheet').controller('approverManageCtrl', function ($scope, $
                 console.log(response)
             })
         }
-    }    
+    }
 })

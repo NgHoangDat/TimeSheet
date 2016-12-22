@@ -1,5 +1,5 @@
 <div style="position:relative;height:500px; padding-right: 16px;overflow: auto">
-    <div style="position:absolute;top:0px;width:100%">
+    <div style="position:absolute;top:0px;width:100%;padding-right: 20px">
         <h3>Thêm dự án mới</h3>
         <form style="width:100%" action="/">
             <div class="form-group">
@@ -24,8 +24,9 @@
                         <th>Tên</th>
                         <th>Email</th>
                         <th>Phone</th>
+                        <th style="text-align: center">#</th>
                     </tr>
-                    <tr ng-repeat="project_employee in project_employees">
+                    <tr ng-repeat="project_employee in project_employees track by $index">
                         <td>
                             {{project_employee.name}}
                         </td>
@@ -34,6 +35,9 @@
                         </td>
                         <td>
                             {{project_employee.phone}}
+                        </td>
+                        <td style="text-align: center; padding-top: 0px;align-items: center;" s>
+                            <a class="btn btn-link" ng-click="delete(project_employee.id)">Xóa</a>
                         </td>
                     </tr>
                 </table>
