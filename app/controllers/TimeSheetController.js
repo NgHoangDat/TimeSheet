@@ -1,10 +1,14 @@
 var db = require('orm').db;
 var Timesheets = db.models.timesheets;
+var Approves = db.models.approves;
+
 
 var TimesheetController = {};
+var async = require('async');
+
 
 TimesheetController.create_timesheet = function(req, res) {
-    
+
     var newTimesheet = {};
     newTimesheet.employee_id = req.body.employee_id;
     newTimesheet.project_id = req.body.project_id;
@@ -17,19 +21,19 @@ TimesheetController.create_timesheet = function(req, res) {
     newTimesheet.notes = req.body.notes;
 
     Timesheets.create(newTimesheet, function(err, timesheet) {
-        
+
         if (err) {
             res.json({status: "error", message: err});
             return;
-        }    
+        }
 
         res.json({status: "success", message: "create new timesheet success!"});
     });
-}    
+}
 
 TimesheetController.update_timesheet = function(req, res) {
-    
-    Timesheets.one({id: req.body.id}, function(err, timesheet) { 
+
+    Timesheets.one({id: req.body.id}, function(err, timesheet) {
 
         if (err) {
             res.json({status: "error", message: err});
@@ -44,21 +48,21 @@ TimesheetController.update_timesheet = function(req, res) {
             timesheet.start_time = req.body.start_time;
             timesheet.end_time = req.body.end_time;
             timesheet.working_hours = req.body.working_hours;
-            timesheet.efficiency = req.body.efficiency;            
+            timesheet.efficiency = req.body.efficiency;
             timesheet.notes = req.body.notes;
-            
+
             timesheet.save(function(err) {
                 if (err) {
                     res.json({status: "error", message: err});
                     return;
-                } 
+                }
                 res.json({status: "success", message: "Update timesheet success!"});
             });
-            
+
         } else {
             res.json({ status: "success", message: "Not found any timesheet with id: " + req.body.id});
         }
-        
+
     });
 }
 
@@ -79,6 +83,52 @@ TimesheetController.get_timesheets_by_user_id = function(req, res) {
             res.json({ status: "success", message: "Not found any timesheet of user_id: " + user_id});
         }
     });
+}
+
+TimesheetController.get_unapprove_timesheets = function(req, res) {
+
+    Timesheets.all(function(err, timesheets) {
+        if (err) {
+            res.json({status: "error", message: err});
+            return;
+        }
+
+        if (timesheets.length > 0) {
+
+            var unapprove_timesheets = [];
+
+            async.forEach(timesheets, function(timesheet, callback) {
+                var timesheet_id = timesheet.id;
+
+                Approves.find({timesheet_id: timesheet_id}, function(err, approves){
+                    if (err) {
+                        res.json({status: "error", message: err});
+                        return;
+                    }
+
+                    if (approves.length == 0) {
+                        unapprove_timesheets.push(timesheet);
+                    }
+                    callback();
+                });
+            }, function(err) {
+                if (err) {
+                    res.json({status: "error", message: err});
+                    return;
+                }
+                res.json({
+                    status: "success",
+                    message: unapprove_timesheets
+                });
+
+            });
+
+        } else {
+            res.json({ status: "success", message: "Not found any timesheet"});
+        }
+
+    })
+
 }
 
 
