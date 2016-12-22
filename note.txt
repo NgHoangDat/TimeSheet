@@ -1,5 +1,29 @@
 Thêm yêu cầu:
-    lấy danh sách các approver 
-    lấy danh sách các timesheet chưa được duyệt
-    lấy danh sách các bản timesheet mà approver sửa đổi 
- 
+    lấy danh sách các timesheet chưa được duyệt của 1 nhân viên nào đó
+    [{
+
+    },...]
+
+    lấy danh sách các timesheet đã được duyệt của 1 nhân viên nào đó
+    [{
+
+    },..]
+
+    lấy danh sách các dự án 1 nhân viên nào đó tham gia
+    [{
+        "project_id" : something,
+        "project_name" : something
+    },...]
+
+    lấy danh sách các thông tin chi tiết các timesheet mà 1 nhân viên nào đó dc phép approve nhưng chưa approve 
+    [{
+        "timesheet_id" : something,
+        "employee_name": something, 
+        "employee_email" : something,
+        "working_date" : something,
+        "working_hours" : something,
+        "efficiency" : something,
+        "notes" : something
+    }, ...]
+
+    lấy danh sách các timesheet chưa được admin duyệt
