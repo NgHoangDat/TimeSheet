@@ -14,15 +14,15 @@
                 <div class="input-group">
                     <div class="input-group-addon">Thêm approver</div>
                     <div class="form-inline">
-                        <select class="form-control" ng-model="project_id" style="width:200px">
+                        <select class="form-control" ng-model="project_id" ng-change="getUser()"  style="width:200px">
                             <option value="" selected>Chọn dự án</option>
                             <option ng-repeat="project in projects" value="{{project.id}}">{{project.name}}</option>
                         </select>
-                        <select class="form-control" ng-model="approver_id" style="width:200px" ng-focus="getUser()">
+                        <select class="form-control" ng-model="approver_id" style="width:200px">
                             <option value="" selected>Chọn approver</option>
                             <option ng-repeat="user in users" value="{{user.id}}">{{user.name}}</option>
                         </select>
-                        <select class="form-control" ng-model="employee_id" style="width:200px" data-ng-focus="getUser()">
+                        <select class="form-control" ng-model="employee_id" style="width:200px">
                             <option value="" selected>Chọn nhân viên</option>
                             <option ng-repeat="user in users" value="{{user.id}}">{{user.name}}</option>
                         </select>
@@ -39,21 +39,15 @@
                 <th>Approver</th>
                 <th>#</th>
             </tr>
-            <tr ng-repeat="user in users">
+            <tr ng-repeat="approver in approvers">
                 <td>
-                    {{user.name}}
+                    {{approver.project}}
                 </td>
                 <td>
-                    {{(user.sex == 1) ? "Nam" : "Nữ"}}
-                </td>
-                <td>
-                    {{user.email}}
-                </td>
-                <td>
-                    {{user.phone}}
+                    {{approver.name}}
                 </td>
                 <td style="text-align: center; padding-top: 0px;align-items: center;">
-                    <a id="{{user.id}}" class="btn btn-link" ng-click="resetPassword(user.id, user.name, user.email)">Reset mật khẩu</a>
+                    <a class="btn btn-link" ng-click="showDetail(approver.id)">Xem chi tiết</a>
                 </td>
             </tr>
         </table>

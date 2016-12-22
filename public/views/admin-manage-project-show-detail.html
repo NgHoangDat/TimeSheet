@@ -2,7 +2,7 @@
     <div style="position:absolute;top:0px;width:100%">
         <h3>Chi tiết dự án {{project_name}}</h3>
         <p>
-            Tên dự án : {{project_name}} <br> Mô tả : {{project_description}} <br> Trưởng dự án : {{leader.name}} <br> Email : {{leader.email}} <br> Phone : {{leader.phone}} <br>
+            Tên dự án : {{project_name}} <br> Mô tả : {{project_description}} <br> Trưởng dự án : {{project_leader}} <br>
         </p>
         <div class="form-group">
             <label for="employee_id">Thành viên dự án</label>
@@ -11,6 +11,7 @@
                     <th>Tên</th>
                     <th>Email</th>
                     <th>Phone</th>
+                    <th style="text-align: center">#</th>
                 </tr>
                 <tr ng-repeat="project_employee in project_employees">
                     <td>
@@ -24,14 +25,17 @@
                     </td>
                 </tr>
                 <tr ng-repeat="new_project_employee in new_project_employees">
-                    <td>
+                    <td style="color: tomato">
                         {{new_project_employee.name}}
                     </td>
-                    <td>
+                    <td style="color: tomato">
                         {{new_project_employee.email}}
                     </td>
-                    <td>
+                    <td style="color: tomato">
                         {{new_project_employee.phone}}
+                    </td>
+                    <td style="text-align: center; padding-top: 0px;align-items: center;"s>
+                        <a class="btn btn-link" ng-click="delete(new_project_employee.id)">Xóa</a>
                     </td>
                 </tr>
             </table>
@@ -43,8 +47,8 @@
                     </div>
                     <div class="form-inline">
                         <select class="form-control" ng-model="employee_id" style="width:250px">
-                                <option ng-repeat="user in users" value="{{user.id}}">{{user.name}}</option>
-                            </select>
+                            <option ng-repeat="user in users" value="{{user.id}}">{{user.name}} - {{user.email}}</option>
+                        </select>
                         <button type="button" class="btn" ng-click="addEmployee()">Thêm vào dự án</button>
                     </div>
                 </div>

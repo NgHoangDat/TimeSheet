@@ -47,7 +47,7 @@
                             <div class="form-inline">
                                 <select class="form-control" ng-model="employee_id" style="width:300px">
                                     <option value="" selected>Chọn nhân viên</option>
-                                    <option ng-repeat="user in users" value="{{user.id}}">{{user.name}}</option>
+                                    <option ng-repeat="user in users" value="{{user.id}}">{{user.name}} - {{user.email}}</option>
                                 </select>
                             </div>
                             <button type="button" class="btn" ng-click="addEmployee()">Thêm vào dự án</button>
