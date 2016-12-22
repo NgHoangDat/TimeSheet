@@ -12,7 +12,7 @@
     }
     
     th:nth-child(4) {
-        width: 105px;
+        width: 120px;
     }
     
     th:nth-child(5) {
@@ -23,16 +23,14 @@
         width: 80px;
     }
     th:nth-child(7) {
-        width: 300px;
+        width: 200px;
+        text-align: center;
     }    
     td {
         overflow: auto;
     }
 </style>
-<div style="position:relative;height:100vh;left:10%;max-width: 1000px">
-    <div style="margin-bottom:16px">
-        <a class="btn btn-primary" href="">Thêm timesheet mới</a>
-    </div>
+<div style="position:relative;height:100vh;left:2%;max-width: 1000px">
     <div style="margin-bottom:10px">
         <h4>Timesheet đang chờ duyệt</h4>
         <table class="table table-hover" style="table-layout:fixed">
@@ -65,10 +63,10 @@
                     {{timesheet.efficiency}}
                 </td>
                 <td style="text-align: center; padding-top: 0px;align-items: center; display: flex">
-                    <a id="{{timesheet.id}}" class="btn btn-link" ng-click="showDetail(id)">Chi tiết</a>
-                    <a id="{{timesheet.id}}" class="btn btn-link" ng-click="approve(id)">Duyệt</a>
-                    <a id="{{timesheet.id}}" class="btn btn-link" ng-click="reqApprove(id)">Yêu cầu duyệt lại</a>
+                    <a class="btn btn-link" ng-click="showDetail(timesheet.id)">Chi tiết timesheet</a>
                 </td>
+            </tr>
+            
             </tr>
         </table>
     </div>

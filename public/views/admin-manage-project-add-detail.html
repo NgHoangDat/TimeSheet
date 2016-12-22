@@ -13,6 +13,7 @@
             <div class="form-group">
                 <label for="leader_id">Trưởng dự án</label>
                 <select class="form-control" ng-model="leader_id">
+                    <option value="" selected>Chọn trưởng dự án</option>
                     <option ng-repeat="user in users" value="{{user.id}}">{{user.name}}</option>
                 </select>
             </div>
@@ -45,6 +46,7 @@
                             </div>
                             <div class="form-inline">
                                 <select class="form-control" ng-model="employee_id" style="width:300px">
+                                    <option value="" selected>Chọn nhân viên</option>
                                     <option ng-repeat="user in users" value="{{user.id}}">{{user.name}}</option>
                                 </select>
                             </div>

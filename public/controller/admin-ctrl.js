@@ -20,9 +20,6 @@ angular.module('timesheet').controller('userManageCtrl', function ($scope, $wind
             $http({
                 method: 'POST',
                 url: '/admins/create_account',
-                headers: {
-                    token: session.token
-                },
                 data: {
                     email: $scope.email,
                     password: $scope.password
@@ -87,14 +84,14 @@ angular.module('timesheet').controller('projectManageCtrl', function ($scope, $w
         ngDialog.open({
             template: 'views/admin-manage-project-add-detail.html',
             className: 'ngdialog-theme-default',
-            width : 500,
-            controller : 'addProjectDetailCtrl',
-            scope : $scope,
-            data : {
-                project_name : $scope.project_name,
-                leader_id : $scope.leader_id,
-                users : $scope.users,
-                token : session.token
+            width: 500,
+            controller: 'addProjectDetailCtrl',
+            scope: $scope,
+            data: {
+                project_name: $scope.project_name,
+                leader_id: $scope.leader_id,
+                users: $scope.users,
+                token: session.token
             }
         });
     }
@@ -141,7 +138,11 @@ angular.module('timesheet').controller('projectManageCtrl', function ($scope, $w
         ngDialog.open({
             template: 'views/admin-manage-project-show-detail.html',
             className: 'ngdialog-theme-default',
-            width : 500
+            width: 500,
+            controller: 'showProjectDetailCtrl',
+            data: {
+                id: id
+            }
         });
     }
 })
@@ -191,20 +192,20 @@ angular.module('timesheet').controller('addProjectDetailCtrl', function ($scope,
                 }, function errorCallback(response) {
 
                 })
-                if(response.data.status == 'success') {
+                if (response.data.status == 'success') {
                     console.log($scope.project_employees)
                     $scope.project_employees.forEach((e) => {
                         $http({
-                            method : 'POST',
-                            url : '/admins/assign_project',
-                            data : {
-                                employee_id : e.id,
-                                project_id : response.data.project.id,
-                                notes : ''
+                            method: 'POST',
+                            url: '/admins/assign_project',
+                            data: {
+                                employee_id: e.id,
+                                project_id: response.data.project.id,
+                                notes: ''
                             }
-                        }).then ( function successCallback (response) {
+                        }).then(function successCallback(response) {
                             console.log(response)
-                        }, function errorCallback (response) {
+                        }, function errorCallback(response) {
                             console.log(response)
                         })
                     })
@@ -218,4 +219,36 @@ angular.module('timesheet').controller('addProjectDetailCtrl', function ($scope,
 
 angular.module('timesheet').controller('showProjectDetailCtrl', function ($scope, $window, $http, $location) {
 
+})
+
+angular.module('timesheet').controller('timesheetManageCtrl', function ($scope, $window, $http, $location) {
+    var session = JSON.parse($window.localStorage.getItem('timesheet_user_session'))
+    $http({
+        
+    })
+})
+
+angular.module('timesheet').controller('approverManageCtrl', function ($scope, $window, $http, $location) {
+    var session = JSON.parse($window.localStorage.getItem('timesheet_user_session'))
+    $http({
+        method : 'GET',
+        url : '/approvers/get_all_approvers'        
+    }).then (function successCallback (response) {
+
+    }, function errorCallback (response) {
+        console.log(response);
+    })
+    $http({
+        method: 'GET',
+        url: '/projects/get_all_projects',
+        headers: {
+            token: session.token
+        }
+    }).then(function successCallback(response) {
+        $scope.projects = response.data.message;        
+    }, function errorCallback(response) {
+
+    })
+    $scope.getUser = () => {
+    }
 })
