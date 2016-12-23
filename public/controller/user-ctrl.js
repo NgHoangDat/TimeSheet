@@ -378,6 +378,7 @@ angular.module('timesheet').controller('userApproveRequestCtrl', function ($scop
             method: 'GET',
             url: '/get_unapprove_timesheets_by_approver_id/' + session.id
         }).then(function successCallback(response) {
+            
             if (response.data.message.constructor != String) {
                 $scope.waiting_timesheets = response.data.message;
                 $scope.waiting_timesheets.forEach((timesheet) => {
