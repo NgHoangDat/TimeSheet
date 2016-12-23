@@ -71,6 +71,20 @@ ApproverController.get_all_approver = function(req, res) {
     });
 }
 
+ApproverController.get_all_records = function(req, res) {
+    Approvers.all(function(err, approvers) {
+        if (err) {
+            res.json({ status: "error", message: err });
+            return;
+        }
+
+        res.json({
+            status: "success",
+            message: approvers
+        });
+    });
+}
+
 ApproverController.get_approve_record_by_timesheet_id = function(req, res) {
 
     var timesheet_id = req.params.timesheet_id;
@@ -146,7 +160,6 @@ ApproverController.get_approve_record_by_timesheet_id = function(req, res) {
         });
 
     });
-
 }
 
 module.exports = ApproverController;
