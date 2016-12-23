@@ -36,4 +36,5 @@ module.exports = function(app){
     app.post('/approvers/approve', ApproverController.approve);
     app.get('/approvers/get_all_approvers', ApproverController.get_all_approver);
     app.get('/approvers/get_approve_record/:timesheet_id', ApproverController.get_approve_record_by_timesheet_id);
+    app.get('/approvers/get_all_records', ApproverController.get_all_records);
 };
