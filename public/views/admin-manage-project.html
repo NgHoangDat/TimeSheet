@@ -16,6 +16,7 @@
                     <div class="form-inline">
                         <input type="text" class="form-control" ng-model="project_name" placeholder="Tên dự án">
                         <select class="form-control" ng-model="leader_id" style="width:250px">
+                            <option value="" selected>Chọn trưởng dự án</option>
                             <option ng-repeat="user in users" value="{{user.id}}">{{user.name}}</option>
                         </select>
                     </div>
@@ -44,7 +45,7 @@
                     {{project.leader_name}}
                 </td>
                 <td style="text-align: center; padding-top: 0px;align-items: center;">
-                    <a class="btn btn-link" ng-click="showDetail(project.id)">Thêm thành viên dự án</a>   
+                    <a class="btn btn-link" ng-click="showDetail(project)">Thêm thành viên dự án</a>   
                 </td>
             </tr>
         </table>

@@ -1,6 +1,7 @@
 var app = angular.module('timesheet', ['ngRoute', 'ngDialog']);
 const session_name = 'timesheet_user_session';
 
+
 function checkType($window, $location, $rootScope, type) {
     var session = JSON.parse($window.localStorage.getItem(session_name));
     if (session == null) $location.path('/login');
@@ -25,7 +26,7 @@ app.config(function ($routeProvider) {
         .when('/', {
             resolve: {
                 "redirect": function ($window, $location) {
-                    var session = $window.localStorage.getItem(session_name);
+                    var session = JSON.parse($window.localStorage.getItem(session_name));
                     if (session == null) $location.path('/login');
                     switch (session.type) {
                         case 'admin':
@@ -49,7 +50,7 @@ app.config(function ($routeProvider) {
         .when('/login', {
             resolve: {
                 "check": function ($window, $location) {
-                    var session = $window.localStorage.getItem(session_name)
+                    var session = JSON.parse($window.localStorage.getItem(session_name))
                     if (session != null) {
                         switch (session.type) {
                             case 'admin':
@@ -196,9 +197,24 @@ angular.module('timesheet').controller('loginCtrl', function ($scope, $http, $lo
 })
 
 
-angular.module('timesheet').controller('mainCtrl', function ($scope, $http, $window) {
-    var session= $window.localStorage.getItem('timesheet_user_session');
+angular.module('timesheet').controller('sidebarCtrl', function ($scope, $http, $window, $location, $rootScope) {
+    var session = JSON.parse($window.localStorage.getItem(session_name));
     $scope.logout = () => {
-
+        if(confirm('Bạn chắc chắn muốn đăng xuất ?')) {
+            $http({
+                method : 'DELETE',
+                url : '/employees/sessions',
+                headers : {
+                    token : session.token
+                } 
+            }).then ( function successCallback (response) {
+                console.log(response)
+                $window.localStorage.removeItem(session_name)
+                $rootScope.type = null
+                $location.path('/login')
+            }, function errorCallback (response) {
+                console.log(response)
+            })
+        }
     }
 })
