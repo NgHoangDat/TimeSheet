@@ -30,6 +30,13 @@
     td:nth-child(6) {
         text-align: center
     }
+    input[type="number"] {
+        background: none;
+        border: none;
+        outline: none;
+        width: 100%;
+        text-align: center;
+    }
 </style>
 <div style="position:relative;height:100vh;left:5%;width: 960px">
     <div style="margin-bottom:10px">
@@ -55,13 +62,13 @@
                     {{timesheet.project_name}}
                 </td>
                 <td>
-                    {{timesheet.working_hours}}
+                    <input type="number" ng-model="timesheet.new.working_hours" min="0" max="{{timesheet.working_hours}}">
                 </td>
                 <td>
                     {{timesheet.description}}
                 </td>
                 <td>
-                    {{timesheet.efficiency}}
+                    <input type="number"  ng-model="timesheet.new.efficiency" min="0" max="{{timesheet.efficiency}}">
                 </td>
                 <td style="text-align: center; padding-top: 6px;align-items: center;">
                     <a class="btn btn-link" style="padding: 0px" ng-click="approve(timesheet)">Duyệt</a>   

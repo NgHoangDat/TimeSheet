@@ -344,7 +344,7 @@ angular.module('timesheet').controller('userTimesheetViewCtrl', function ($scope
 
 })
 
-angular.module('timesheet').controller('userApproveRequestCtrl', function ($scope, $window, $http, $location) {
+angular.module('timesheet').controller('userApproveRequestCtrl', function ($scope, $window, $http, $location, ngDialog) {
     var session = JSON.parse($window.localStorage.getItem('timesheet_user_session'));
 
     var allProjects = new Array();
@@ -373,23 +373,52 @@ angular.module('timesheet').controller('userApproveRequestCtrl', function ($scop
 
     })
 
-    $http({
-        method: 'GET',
-        url: '/get_unapprove_timesheets_by_approver_id/' + session.id
-    }).then(function successCallback(response) {
-        if (response.data.message.constructor != String) {
-            $scope.waiting_timesheets = response.data.message;
-            $scope.waiting_timesheets.forEach((timesheet) => {
-                timesheet.project_name = allProjects.find((e) => {
-                    return e.id == timesheet.project_id
-                }).name;
-                timesheet.employee_name = allUsers.find((e) => {
-                    return e.id == timesheet.employee_id
-                }).name;
-                timesheet.working_date = new Date(timesheet.working_date).toDateString()
-            })
-        }
-    }, function errorCallback(response) {
+    var getTimesheet = () => {
+        $http({
+            method: 'GET',
+            url: '/get_unapprove_timesheets_by_approver_id/' + session.id
+        }).then(function successCallback(response) {
+            if (response.data.message.constructor != String) {
+                $scope.waiting_timesheets = response.data.message;
+                $scope.waiting_timesheets.forEach((timesheet) => {
+                    timesheet.project_name = allProjects.find((e) => {
+                        return e.id == timesheet.project_id
+                    }).name;
+                    timesheet.employee_name = allUsers.find((e) => {
+                        return e.id == timesheet.employee_id
+                    }).name;
+                    timesheet.working_date = new Date(timesheet.working_date).toDateString()
+                    timesheet.new = {
+                        working_hours : timesheet.working_hours,
+                        efficiency : timesheet.efficiency
+                    }
+                })
+            }
+        }, function errorCallback(response) {
 
-    })
+        })
+
+    }
+
+    getTimesheet();
+    $scope.approve = (timesheet) => {
+        timesheet.new.note = prompt('Bạn muốn ghi chú điều gì trước khi timesheet được duyệt không?');
+        $http({
+            method: 'POST',
+            url: '/approvers/approve',
+            data: {
+                approver_id: session.id,
+                timesheet_id: timesheet.id,
+                working_hours: timesheet.new.working_hours,
+                efficiency: timesheet.new.efficiency,
+                notes: timesheet.new.note
+            }
+        }).then(function successCallback(response) {
+            console.log(response);
+            getTimesheet()
+        }, function errorCallback (response) {
+
+        })
+    }
+
 })
