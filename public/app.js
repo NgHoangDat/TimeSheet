@@ -66,7 +66,7 @@ app.config(function ($routeProvider) {
                     }
                 }
             },
-            controller: 'loginCtrl',
+            controller : 'logCtrl',
             templateUrl: 'views/login.html'
         })
         .when('/user', {
@@ -155,8 +155,8 @@ app.config(function ($routeProvider) {
         })
 })
 
-angular.module('timesheet').controller('loginCtrl', function ($scope, $http, $location, $window, $rootScope) {
-    $scope.submit = () => {
+angular.module('timesheet').controller('logCtrl', function ($scope, $http, $location, $window, $rootScope) {
+    $scope.login = () => { 
         $http({
             method: 'POST',
             url: 'employees/sessions',
@@ -194,12 +194,8 @@ angular.module('timesheet').controller('loginCtrl', function ($scope, $http, $lo
 
         });
     }
-})
-
-
-angular.module('timesheet').controller('sidebarCtrl', function ($scope, $http, $window, $location, $rootScope) {
-    var session = JSON.parse($window.localStorage.getItem(session_name));
     $scope.logout = () => {
+        var session = JSON.parse($window.localStorage.getItem(session_name));
         if(confirm('Bạn chắc chắn muốn đăng xuất ?')) {
             $http({
                 method : 'DELETE',
@@ -217,4 +213,8 @@ angular.module('timesheet').controller('sidebarCtrl', function ($scope, $http, $
             })
         }
     }
+})
+
+angular.module('timesheet').controller('sidebarCtrl', function ($scope, $http, $window, $location, $rootScope) {
+    
 })

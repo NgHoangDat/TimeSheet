@@ -1,5 +1,5 @@
 <style>
-    th:nth-child(3) {
+    th:nth-child(4) {
         text-align: center
     }
     td {
@@ -16,15 +16,15 @@
                     <div class="form-inline">
                         <select class="form-control" ng-model="project_id" ng-change="getUser()"  style="width:200px">
                             <option value="" selected>Chọn dự án</option>
-                            <option ng-repeat="project in projects" value="{{project.id}}">{{project.name}}</option>
+                            <option ng-repeat="project in projects track by $index" value="{{project.id}}">{{project.name}}</option>
                         </select>
                         <select class="form-control" ng-model="approver_id" style="width:200px">
                             <option value="" selected>Chọn approver</option>
-                            <option ng-repeat="user in users" value="{{user.id}}">{{user.name}}</option>
+                            <option ng-repeat="user in users track by $index" value="{{user.id}}">{{user.name}}-{{user.email}}</option>
                         </select>
                         <select class="form-control" ng-model="employee_id" style="width:200px">
                             <option value="" selected>Chọn nhân viên</option>
-                            <option ng-repeat="user in users" value="{{user.id}}">{{user.name}}</option>
+                            <option ng-repeat="user in users track by $index" value="{{user.id}}">{{user.name}}-{{user.email}}</option>
                         </select>
                     </div>
                 </div>
@@ -37,14 +37,18 @@
             <tr>
                 <th>Dự án</th>
                 <th>Approver</th>
+                <th>Nhân viên</th>
                 <th>#</th>
             </tr>
-            <tr ng-repeat="approver in approvers">
+            <tr ng-repeat="approver in approvers track by $index">
                 <td>
                     {{approver.project}}
                 </td>
                 <td>
-                    {{approver.name}}
+                    {{approver.approver_name}}-{{approver.approver_email}}
+                </td>
+                <td>
+                    {{approver.employee_name}}-{{approver.employee_email}}
                 </td>
                 <td style="text-align: center; padding-top: 0px;align-items: center;">
                     <a class="btn btn-link" ng-click="showDetail(approver.id)">Xem chi tiết</a>

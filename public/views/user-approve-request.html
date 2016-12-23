@@ -1,10 +1,75 @@
-<div style="position:relative;height:100vh;left:10%">
-    <table>
-        <th>
-
-        </th>
-        <td ng-repeat="timesheet in requested_timesheets">
-
-        </td>
-    </table>
+<style>
+    th:nth-child(1) {
+        width: 150px
+    }
+    th:nth-child(2) {
+        width: 150px;
+    }    
+    th:nth-child(3) {
+        width: 150px;
+    }   
+    th:nth-child(4) {
+        width: 120px;
+    }    
+    th:nth-child(5) {
+        width: 250px;
+    }    
+    th:nth-child(6) {
+        width: 80px;
+    }    
+    th:nth-child(7) {
+        width: 60px;
+        text-align: center;
+    }
+    td {
+        overflow: auto;
+    }
+    td:nth-child(4) {
+        text-align: center
+    }
+    td:nth-child(6) {
+        text-align: center
+    }
+</style>
+<div style="position:relative;height:100vh;left:5%;width: 960px">
+    <div style="margin-bottom:10px">
+        <h4>Timesheet cần được approve</h4>
+        <table class="table table-hover" style="table-layout:fixed">
+            <tr>
+                <th>Nhân viên</th>
+                <th>Ngày</th>
+                <th>Dự án</th>
+                <th>Tổng thời gian</th>
+                <th>Mô tả ngắn</th>
+                <th>Hiệu quả</th>
+                <th>#</th>
+            </tr>
+            <tr ng-repeat="timesheet in waiting_timesheets">
+                <td>
+                    {{timesheet.employee_name}}
+                </td>
+                <td>
+                    {{timesheet.working_date}}
+                </td>
+                <td>
+                    {{timesheet.project_name}}
+                </td>
+                <td>
+                    {{timesheet.working_hours}}
+                </td>
+                <td>
+                    {{timesheet.description}}
+                </td>
+                <td>
+                    {{timesheet.efficiency}}
+                </td>
+                <td style="text-align: center; padding-top: 6px;align-items: center;">
+                    <a class="btn btn-link" style="padding: 0px" ng-click="approve(timesheet)">Duyệt</a>   
+                </td>
+            </tr>
+            
+        </table>
+    </div>
+    
+    
 </div>

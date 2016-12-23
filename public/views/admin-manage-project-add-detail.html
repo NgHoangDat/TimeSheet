@@ -1,3 +1,22 @@
+<style>
+    th:nth-child(1) {
+        width: 150px;
+    }
+    th:nth-child(2) {
+        width: 300px;
+    }
+    th:nth-child(3) {
+        width: 120px;
+    }
+    th:nth-child(4) {
+        width: 50px;
+        text-align: center;
+    }
+    td {
+        overflow: auto;
+    }
+</style>
+
 <div style="position:relative;height:500px; padding-right: 16px;overflow: auto">
     <div style="position:absolute;top:0px;width:100%;padding-right: 20px">
         <h3>Thêm dự án mới</h3>
@@ -14,7 +33,7 @@
                 <label for="leader_id">Trưởng dự án</label>
                 <select class="form-control" ng-model="leader_id">
                     <option value="" selected>Chọn trưởng dự án</option>
-                    <option ng-repeat="user in users" value="{{user.id}}">{{user.name}}</option>
+                    <option ng-repeat="user in users" value="{{user.id}}">{{user.name}} - {{user.email}}</option>
                 </select>
             </div>
             <div class="form-group">
@@ -24,7 +43,7 @@
                         <th>Tên</th>
                         <th>Email</th>
                         <th>Phone</th>
-                        <th style="text-align: center">#</th>
+                        <th>#</th>
                     </tr>
                     <tr ng-repeat="project_employee in project_employees track by $index">
                         <td>
@@ -36,8 +55,8 @@
                         <td>
                             {{project_employee.phone}}
                         </td>
-                        <td style="text-align: center; padding-top: 0px;align-items: center;" s>
-                            <a class="btn btn-link" ng-click="delete(project_employee.id)">Xóa</a>
+                        <td style="text-align: center; padding-top: 4px;align-items: center;">
+                            <a class="btn btn-link" style="padding: 2px" ng-click="delete(project_employee.id)">Xóa</a>
                         </td>
                     </tr>
                 </table>
