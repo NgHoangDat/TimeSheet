@@ -1,8 +1,27 @@
+<style>
+    th:nth-child(1) {
+        width: 150px;
+    }
+    th:nth-child(2) {
+        width: 300px;
+    }
+    th:nth-child(3) {
+        width: 120px;
+    }
+    th:nth-child(4) {
+        width: 50px;
+        text-align: center;
+    }
+    td {
+        overflow: auto;
+    }
+</style>
+
 <div style="position:relative;height:400px; padding-right: 16px;overflow: auto">
     <div style="position:absolute;top:0px;width:100%; padding-right: 20px">
         <h3>Chi tiết dự án {{project_name}}</h3>
         <p>
-            Tên dự án : {{project_name}} <br> Mô tả : {{project_description}} <br> Trưởng dự án : {{project_leader}} <br>
+            Tên dự án : {{project_name}} <br> Mô tả : {{project_description}} <br> Trưởng dự án : {{project_leader}} - {{project_leader_email}} <br>
         </p>
         <div class="form-group">
             <label for="employee_id">Thành viên dự án</label>
@@ -35,8 +54,8 @@
                     <td style="color: tomato">
                         {{new_project_employee.phone}}
                     </td>
-                    <td style="text-align: center; padding-top: 0px;align-items: center;"s>
-                        <a class="btn btn-link" ng-click="delete(new_project_employee.id)">Xóa</a>
+                    <td style="text-align: center; padding-top: 4px;align-items: center;"s>
+                        <a class="btn btn-link" style="padding: 2px" ng-click="delete(new_project_employee.id)">Xóa</a>
                     </td>
                 </tr>
             </table>
