@@ -131,7 +131,6 @@ AdminController.assign_project = function(req, res) {
         res.json({ status: "success", message: "Assign project success!"});
 
     });
-
 }
 
 /*

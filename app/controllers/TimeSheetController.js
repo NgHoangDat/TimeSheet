@@ -3,6 +3,7 @@ var Timesheets = db.models.timesheets;
 var Approves = db.models.approves;
 var Approvers = db.models.approvers;
 var Employees = db.models.employees;
+var Roles = db.models.roles;
 
 var TimesheetController = {};
 var async = require('async');
@@ -240,7 +241,95 @@ TimesheetController.get_unapprove_timesheets_by_approver_id = function(req, res)
             res.json({ status: "success", message: []});
         }
     });
+}
 
+TimesheetController.get_timesheets_havent_approved_by_admin = function(req, res) {
+
+    async.waterfall([
+        function(callback) {
+            Roles.one({name: "admin"}, function(err, role) {
+                if (err) {
+                    res.json({status: "error", message: err});
+                    return;
+                } else
+                if (role == null) {
+                    res.json({status: "error", message: "System haven't had admin-role yet!"});
+                    return;
+                }
+
+                callback(null, role.id);
+            });
+        },
+        function(role_id, callback) {
+            Employees.one({role_id: role_id}, function(err, employee) {
+                if (err) {
+                    res.json({status: "error", message: err});
+                    return;
+                } else
+                if (employee == null) {
+                    res.json({status: "error", message: "System haven't had admin yet!"});
+                    return;
+                }
+
+                var admin_id = employee.id;
+                callback(null, admin_id);
+            });
+        }
+    ], function(err, admin_id) {
+        Timesheets.all(function(err, timesheets) {
+            if (err) {
+                res.json({status: "error", message: err});
+                return;
+            }
+
+            var res_timesheets = [];
+
+            async.forEach(timesheets, function(timesheet, callback) {
+                var timesheet_id = timesheet.id;
+
+                Approves.count({timesheet_id: timesheet_id, approver_id: admin_id}, function(err, admin_approve_count) {
+                    if (err) {
+                        res.json({status: "error", message: err});
+                        return;
+                    }
+
+                    if (admin_approve_count == 0) {
+                        var employee_id = timesheet.employee_id;
+                        Employees.one({id: employee_id}, function(err, employee) {
+                            if (err) {
+                                res.json({status: "error", message: err});
+                                return;
+                            }
+                            if (employee) {
+                                timesheet.employee_name = employee.name;
+                                timesheet.employee_email = employee.email;
+
+                                timesheet = JSON.parse(JSON.stringify(timesheet));
+                                res_timesheets.push(timesheet);
+                            } else {
+                                res.json({status: "error", message: "Not found employee"});
+                                return;
+                            }
+                            callback();
+                        });
+                    } else {
+                        callback();
+                    }
+
+                });
+            }, function(err) {
+                if (err) {
+                    res.json({status: "error", message: err});
+                    return;
+                }
+                res.json({
+                    status: "success",
+                    message: res_timesheets
+                });
+
+            });
+        });
+    });
 }
 
 

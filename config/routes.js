@@ -28,9 +28,10 @@ module.exports = function(app){
 
     app.post('/timesheets', TimesheetController.create_timesheet);
     app.patch('/timesheets', TimesheetController.update_timesheet);
-    app.get('/timesheets/:user_id', TimesheetController.get_timesheets_by_user_id);
+    app.get('/timesheets/get_timesheets_by_user_id/:user_id', TimesheetController.get_timesheets_by_user_id);
     app.get('/get_unapprove_timesheets', TimesheetController.get_unapprove_timesheets);
     app.get('/get_unapprove_timesheets_by_approver_id/:approver_id', TimesheetController.get_unapprove_timesheets_by_approver_id);
+    app.get('/timesheets/get_timesheets_havent_approved_by_admin', TimesheetController.get_timesheets_havent_approved_by_admin);
 
     app.post('/approvers/approve', ApproverController.approve);
     app.get('/approvers/get_all_approvers', ApproverController.get_all_approver);
