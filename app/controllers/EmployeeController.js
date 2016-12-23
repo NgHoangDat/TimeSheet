@@ -1,6 +1,8 @@
 var db = require('orm').db;
 var hat = require('hat');
 var Employees = db.models.employees;
+var Employees_Projects = db.models.employees_projects;
+var Projects = db.models.projects;
 var Roles = db.models.roles;
 var Roles = db.models.roles;
 var EmployeeController = {};
@@ -197,7 +199,78 @@ EmployeeController.get_all_employees = function(req, res) {
             res.json({status: "success", message: "Not found any employee!"})
         }
     });
+}
 
+EmployeeController.get_info_by_user_id = function(req, res) {
+    var user_id = req.params.user_id;
+
+    Employees.one({id: user_id}, function(err, employee) {
+        if (err) {
+            res.json({ status: "error", message: err });
+            return;
+        }
+
+        if (employee) {
+            res.json({
+                status: "success",
+                message: {
+                    "name" : employee.name,
+                    "email": employee.email
+                }
+            });
+        } else {
+            res.json({
+                status: "success",
+                message: []
+            });
+        }
+
+
+    })
+}
+
+EmployeeController.get_projects_by_user_id = function(req, res) {
+    var user_id = req.params.user_id;
+
+    async.waterfall([
+        function(callback) {
+            Employees_Projects.find({employee_id: user_id}, function(err, emp_prjs) {
+                if (err) {
+                    res.json({ status: "error", message: err });
+                    return;
+                }
+                callback(null, emp_prjs);
+            });
+        }
+    ], function(err, emp_prjs) {
+        if (emp_prjs.length > 0) {
+            res_projects = [];
+            async.forEach(emp_prjs, function(emp_prj, callback) {
+                var project_id = emp_prj.project_id;
+                Projects.one({id: project_id}, function(err, project) {
+                    if (err) {
+                        res.json({ status: "error", message: err });
+                        return;
+                    }
+                    res_projects.push(project);
+                    callback();
+                });
+
+            }, function(err) {
+                if (err) {
+                    res.json({ status: "error", message: err });
+                    return;
+                }
+                res.json({
+                    status: "success",
+                    message: res_projects
+                });
+            });
+        } else {
+            console.log("Not found any projects!");
+            res.json({status: "success", message: []});
+        }
+    });
 }
 
 module.exports = EmployeeController;

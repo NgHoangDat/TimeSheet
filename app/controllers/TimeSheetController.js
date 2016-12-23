@@ -1,7 +1,8 @@
 var db = require('orm').db;
 var Timesheets = db.models.timesheets;
 var Approves = db.models.approves;
-
+var Approvers = db.models.approvers;
+var Employees = db.models.employees;
 
 var TimesheetController = {};
 var async = require('async');
@@ -75,24 +76,46 @@ TimesheetController.get_timesheets_by_user_id = function(req, res) {
             return;
         }
         if (timesheets.length > 0) {
-            res.json({
-                status: "success",
-                message: timesheets
+            res_timesheets = [];
+            async.forEach(timesheets, function(timesheet, callback) {
+                var timesheet_id = timesheet.id;
+                Approves.find({timesheet_id: timesheet_id}, function(err, approves){
+                    if (err) {
+                        res.json({status: "error", message: err});
+                        return;
+                    }
+                    if (approves.length == 0) {
+                        timesheet.is_approved = false;
+                    } else {
+                        timesheet.id_approved = true;
+                    }
+
+                    timesheet = JSON.parse(JSON.stringify(timesheet));
+                    res_timesheets.push(timesheet);
+                    callback();
+                });
+
+            }, function(err) {
+                res.json({
+                    status: "success",
+                    message: res_timesheets
+                });
             });
+
+
         } else {
             res.json({ status: "success", message: "Not found any timesheet of user_id: " + user_id});
         }
     });
 }
 
-TimesheetController.get_unapprove_timesheets = function(req, res) {
 
+TimesheetController.get_unapprove_timesheets = function(req, res) {
     Timesheets.all(function(err, timesheets) {
         if (err) {
             res.json({status: "error", message: err});
             return;
         }
-
         if (timesheets.length > 0) {
 
             var unapprove_timesheets = [];
@@ -128,6 +151,95 @@ TimesheetController.get_unapprove_timesheets = function(req, res) {
         }
 
     })
+}
+
+TimesheetController.get_unapprove_timesheets_by_approver_id = function(req, res) {
+    var approver_id = req.params.approver_id;
+
+    async.waterfall([
+        function(callback) {
+            Approvers.find({approver_id: approver_id}, function(err, approvers) {
+                if (err) {
+                    res.json({status: "error", message: err});
+                    return;
+                }
+
+                callback(null, approvers);
+            });
+        }
+    ], function(err, approvers) {
+        if (approvers.length > 0) {
+            res_timesheets = [];
+            async.forEach(approvers, function(approver, callback) {
+                var employee_id = approver.employee_id;
+
+                async.waterfall([
+                    function(callback) {
+                        Timesheets.find({employee_id: employee_id}, function(err, timesheets) {
+                            if (err) {
+                                res.json({status: "error", message: err});
+                                return;
+                            }
+                            callback(null, timesheets);
+                        });
+                    }
+                ], function(err, timesheets) {
+                    async.forEach(timesheets, function(timesheet, callback) {
+                        var timesheet_id = timesheet.id;
+
+                        Approves.find({timesheet_id: timesheet_id}, function(err, approves){
+                            if (err) {
+                                res.json({status: "error", message: err});
+                                return;
+                            }
+                            if (approves.length == 0) {
+                                Employees.one({id: employee_id}, function(err, employee) {
+                                    if (err) {
+                                        res.json({status: "error", message: err});
+                                        return;
+                                    }
+                                    if (employee) {
+                                        timesheet.employee_name = employee.name;
+                                        timesheet.employee_email = employee.email;
+
+                                        timesheet = JSON.parse(JSON.stringify(timesheet));
+                                        res_timesheets.push(timesheet);
+                                    } else {
+                                        res.json({status: "error", message: "Not found employee"});
+                                        return;
+                                    }
+                                    callback();
+                                });
+                            } else {
+                                callback();
+                            }
+                        });
+                    }, function(err){
+                        if (err) {
+                            res.json({status: "error", message: err});
+                            return;
+                        }
+                        callback();
+                    });
+                });
+
+            }, function(err) {
+                if (err) {
+                    res.json({status: "error", message: err});
+                    return;
+                }
+
+                res.json({
+                    status: "success",
+                    message: res_timesheets
+                });
+            });
+
+        } else {
+            console.log("Not found any approver!");
+            res.json({ status: "success", message: []});
+        }
+    });
 
 }
 

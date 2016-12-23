@@ -13,8 +13,10 @@ module.exports = function(app){
     app.delete('/employees/sessions', EmployeeController.logout);
     app.patch('/employees/modify_account', EmployeeController.modify_account);
     app.get('/employees/info', EmployeeController.info);
+    app.get('/employees/get_info_by_user_id/:user_id', EmployeeController.get_info_by_user_id);
     app.post('/employees/change_password', EmployeeController.change_password);
     app.get('/employees/get_all_employees', EmployeeController.get_all_employees);
+    app.get('/employees/get_projects_by_user_id/:user_id', EmployeeController.get_projects_by_user_id);
 
     app.post('/admins/create_account', AdminController.create_account);
     app.post('/admins/create_project', AdminController.create_project);
@@ -28,6 +30,7 @@ module.exports = function(app){
     app.patch('/timesheets', TimesheetController.update_timesheet);
     app.get('/timesheets/:user_id', TimesheetController.get_timesheets_by_user_id);
     app.get('/get_unapprove_timesheets', TimesheetController.get_unapprove_timesheets);
+    app.get('/get_unapprove_timesheets_by_approver_id/:approver_id', TimesheetController.get_unapprove_timesheets_by_approver_id);
 
     app.post('/approvers/approve', ApproverController.approve);
     app.get('/approvers/get_all_approvers', ApproverController.get_all_approver);
