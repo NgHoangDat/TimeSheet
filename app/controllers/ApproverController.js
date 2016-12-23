@@ -4,6 +4,8 @@ var async = require('async');
 var Approves = db.models.approves;
 var Approvers = db.models.approvers;
 var Employees = db.models.employees;
+var Timesheets = db.models.timesheets;
+var Projects = db.models.projects;
 
 ApproverController.approve = function(req, res) {
 
@@ -71,6 +73,7 @@ ApproverController.get_all_approver = function(req, res) {
 
 ApproverController.get_approve_record_by_timesheet_id = function(req, res) {
 
+    var timesheet_id = req.params.timesheet_id;
     Approves.find({timesheet_id: req.params.timesheet_id}, function(err, approves){
         if (err) {
             res.json({ status: "error", message: err });
@@ -79,38 +82,67 @@ ApproverController.get_approve_record_by_timesheet_id = function(req, res) {
 
         var records = [];
 
-        async.forEach(approves, function(approve, callback) {
+        async.waterfall([
+            function (callback) {
+                Timesheets.one({id: timesheet_id}, function(err, timesheet) {
+                    if (err) {
+                        res.json({ status: "error", message: err });
+                        return;
+                    }
 
-            var approver_id = approve.approver_id;
-            approve.approver_id = undefined;
+                    callback(null, timesheet.project_id);
+                });
+            },
+            function(project_id, callback) {
+                Projects.one({id: project_id}, function(err, project) {
+                    if (err) {
+                        res.json({ status: "error", message: err });
+                        return;
+                    }
 
-            Employees.one({id: approver_id}, function(err, approver) {
-                if (err) {
-                    res.json({ status: "error", message: err });
-                    return;
-                }
-
-                approver.password = undefined;
-                approver.token = undefined;
-                approver = JSON.parse(JSON.stringify(approver));
-
-                approve.approver = approver;
-                approve = JSON.parse(JSON.stringify(approve));
-                records.push(approve);
-                callback();
-            });
-
-        }, function(err) {
+                    callback(null, project);
+                });
+            }
+        ], function (err, project) {
             if (err) {
                 res.json({ status: "error", message: err });
                 return;
             }
 
-            res.json({
-                status: "success",
-                message: records
-            });
+            async.forEach(approves, function(approve, callback) {
 
+                var approver_id = approve.approver_id;
+                approve.approver_id = undefined;
+
+                Employees.one({id: approver_id}, function(err, approver) {
+                    if (err) {
+                        res.json({ status: "error", message: err });
+                        return;
+                    }
+
+                    approver.password = undefined;
+                    approver.token = undefined;
+                    approver = JSON.parse(JSON.stringify(approver));
+
+                    approve.approver = approver;
+                    approve.project = project;
+                    approve = JSON.parse(JSON.stringify(approve));
+                    records.push(approve);
+                    callback();
+                });
+
+            }, function(err) {
+                if (err) {
+                    res.json({ status: "error", message: err });
+                    return;
+                }
+
+                res.json({
+                    status: "success",
+                    message: records
+                });
+
+            });
         });
 
     });

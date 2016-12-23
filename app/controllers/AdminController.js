@@ -5,6 +5,8 @@ var Projects = db.models.projects;
 var Approvers= db.models.approvers;
 var Employees_Projects = db.models.employees_projects;
 
+var async = require('async');
+
 var DEFAULT_ACCOUNT_SEX = 1;
 var DEFAULT_ACCOUnT_NAME = "NAME";
 var DEFAULT_ACCOUNT_PHONE = "0000000000";
@@ -34,28 +36,45 @@ AdminController.create_account = function(req, res) {
 }
 
 AdminController.create_project = function(req, res) {
-    
+
     var newProject = {};
     newProject.name = req.body.name;
     newProject.description = req.body.description;
     newProject.leader_id = req.body.leader_id;
     newProject.notes = req.body.notes;
-    
+
     console.log(newProject);
 
-    Projects.create(newProject, function(err, project) {
-        if (err) {
-            res.json({status: "error", message: err});
-            return;
+    async.waterfall([
+        function(callback) {
+            Projects.create(newProject, function(err, project) {
+                if (err) {
+                    res.json({status: "error", message: err});
+                    return;
+                }
+                callback(null, project);
+            });
+        },
+        function(project, callback) {
+            emp_prj = {};
+            emp_prj.employee_id = project.leader_id;
+            emp_prj.project_id = project.id;
+            Employees_Projects.create(emp_prj, function(err, employee_project) {
+                if (err) {
+                    res.json({status: "error", message: err});
+                    return;
+                }
+                callback(null);
+            });
         }
-        
-        res.json({ status: "success", message: "Create new project success!", project : project});
-
+    ], function(err) {
+        res.json({ status: "success", message: "Create new project success!"});
     });
+
 }
 
 AdminController.restore_password = function(req, res) {
-    
+
     var email = req.body.email;
     var new_password = req.body.new_password;
 
@@ -63,14 +82,14 @@ AdminController.restore_password = function(req, res) {
         if (err) {
             res.json({status: "error", message: err});
             return;
-        } 
+        }
         if (employee) {
             employee.password = new_password;
             employee.save(function(err) {
                 if (err) {
                     res.json({status: "error", message: err});
-                    returna
-                } 
+                    return;
+                }
                 res.json({status: "success", message: "Restore password success!"});
             });
         } else {
@@ -80,13 +99,13 @@ AdminController.restore_password = function(req, res) {
 }
 
 AdminController.assign_approver = function(req, res) {
-    
+
     var newApprover = {};
     newApprover.approver_id = req.body.approver_id;
     newApprover.employee_id = req.body.employee_id;
     newApprover.project_id = req.body.project_id;
     newApprover.notes = req.body.notes;
-    
+
     Approvers.create(newApprover, function(err, approver) {
         if (err) {
             res.json({status: "error", message: err});
@@ -98,12 +117,12 @@ AdminController.assign_approver = function(req, res) {
 }
 
 AdminController.assign_project = function(req, res) {
-    
+
     var newEmployeesProjects = {};
     newEmployeesProjects.employee_id = req.body.employee_id;
     newEmployeesProjects.project_id = req.body.project_id;
     newEmployeesProjects.notes = req.body.notes;
-    
+
     Employees_Projects.create(newEmployeesProjects, function(err, employee_project){
         if (err) {
             res.json({status: "error", message: err});

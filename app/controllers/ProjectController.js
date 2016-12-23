@@ -7,7 +7,7 @@ var async = require('async');
 var ProjectController = {};
 
 ProjectController.get_all_projects = function(req, res) {
-    
+
     Projects.all(function(err, projects){
         if (err) {
             res.json({ status: "error", message: err });
