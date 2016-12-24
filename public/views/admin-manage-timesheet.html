@@ -60,14 +60,14 @@
         </form>
     </p>
     <div style="display: none">
-        <div id="printContent">
+        <div id="printContent" style="width: 900px; position: relative;margin : auto">
             <h4>Báo cáo giờ làm việc nhân viên từ {{start_date_str}} đến {{end_date_str}}</h4>
-            <table class="table table-hover" style="table-layout:fixed;width: 900px">
+            <table class="table table-hover table-bordered" style="table-layout:fixed;width: 900px">
                 <tr>
                     <th style="width: 250px">Nhân viên</th>
                     <th style="width: 300px">Email</th>
-                    <th style="width: 150px">Tổng thời gian</th>
-                    <th style="width: 200px">Hiệu quả trung bình</th>
+                    <th style="width: 110px;">Tổng thời gian</th>
+                    <th style="width: 140px">Hiệu quả trung bình</th>
                 </tr>
                 <tr ng-repeat="report in final_reports">
                     <td>

@@ -284,15 +284,12 @@ angular.module('timesheet').controller('timesheetManageCtrl', function ($scope, 
         }
         var start_date = new Date($scope.start_date);
         start_date = start_date.getFullYear() + '-' + (start_date.getMonth() + 1) + '-' + start_date.getDate();
-        $scope.start_date_str = start_date;
+        $scope.start_date_str = start_date.split('-').reverse().join('-');
 
         var end_date = new Date($scope.end_date);
         end_date = end_date.getFullYear() + '-' + (end_date.getMonth() + 1) + '-' + end_date.getDate();
-        $scope.end_date_str = end_date;
-
-        console.log(start_date)
-        console.log(end_date)
-
+        $scope.end_date_str = end_date.split('-').reverse().join('-');
+        
         $http({
             method: 'POST',
             url: '/admins/output',
@@ -304,7 +301,6 @@ angular.module('timesheet').controller('timesheetManageCtrl', function ($scope, 
                 end_date: end_date
             }
         }).then(function successCallback(response) {
-            console.log(response)
             if (response.data.message.constructor != String) {
                 $scope.final_reports = response.data.message;
                 $scope.final_reports.forEach((report) => {

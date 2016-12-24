@@ -11,7 +11,6 @@ angular.module('timesheet').controller('userInfoCtrl', function ($scope, $http, 
         }
     }).then(function successCallback(response) {
         //dua thong tin vao info roi $scope.info
-        console.log(response)
         var data = response.data.message;
         ori_info = {
             name: data.name,
@@ -50,7 +49,7 @@ angular.module('timesheet').controller('userInfoCtrl', function ($scope, $http, 
                 "phone": $scope.info.phone,
             }
         }).then(function successCallback(response) {
-            console.log(response)
+            console.log(response.data.message)
         }, function errorCallback(response) {
 
         })
@@ -84,6 +83,7 @@ angular.module('timesheet').controller('userTimesheetCtrl', function ($scope, $h
     var session = JSON.parse($window.localStorage.getItem('timesheet_user_session'))
 
     //Lay danh sach cac du an
+    $scope.allProjects = new Array();
     $http({
         method: 'GET',
         url: '/employees/get_projects_by_user_id/' + session.id,
@@ -91,13 +91,13 @@ angular.module('timesheet').controller('userTimesheetCtrl', function ($scope, $h
             token: session.token
         }
     }).then(function successCallback(response) {
-        $scope.allProjects = response.data.message;
-        console.log(response)
+        if(response.data.message.constructor != String) $scope.allProjects = response.data.message;        
     }, function errorCallback(response) {
 
     })
 
     //Lay danh sach cac timesheet
+    $scope.timesheets = new Array();
     var getTimesheet = () => {
         $http({
             method: 'GET',
@@ -106,8 +106,7 @@ angular.module('timesheet').controller('userTimesheetCtrl', function ($scope, $h
                 token: session.token
             }
         }).then(function successCallback(response) {
-            console.log(response)
-            $scope.timesheets = response.data.message;
+            if(response.data.message.constructor != String) $scope.timesheets = response.data.message;
             $scope.waiting_timesheets = new Array();
             $scope.approved_timesheets = new Array();
             for (var i in $scope.timesheets) {
@@ -130,7 +129,7 @@ angular.module('timesheet').controller('userTimesheetCtrl', function ($scope, $h
                 return d_b - d_a;
             })
         }, function errorCallback(response) {
-            console.log(response)
+            console.log(response.data.message)
         })
 
     }
@@ -215,7 +214,6 @@ angular.module('timesheet').controller('userTimesheetAddCtrl', function ($scope,
     }
 
     $scope.setMaxTime = () => {
-        console.log($scope.input.end_time);
         var timeLength = Date.parse($scope.input.end_time) - Date.parse($scope.input.start_time);
         if (isNaN(timeLength)) $scope.maxTime = 0;
         else {
@@ -252,7 +250,7 @@ angular.module('timesheet').controller('userTimesheetAddCtrl', function ($scope,
                 notes: ''
             }
         }).then(function successCallback(response) {
-            console.log(response)
+            console.log(response.data.message)
             if (response.data.status == 'success') {
                 $scope.closeThisDialog();
             }
@@ -284,7 +282,6 @@ angular.module('timesheet').controller('userTimesheetEditCtrl', function ($scope
     }
 
     $scope.setMaxTime = () => {
-        console.log($scope.input.end_time);
         var timeLength = Date.parse($scope.input.end_time) - Date.parse($scope.input.start_time);
         if (isNaN(timeLength)) $scope.maxTime = 0;
         else {
@@ -322,7 +319,7 @@ angular.module('timesheet').controller('userTimesheetEditCtrl', function ($scope
                 notes: ''
             }
         }).then(function successCallback(response) {
-            console.log(response)
+            console.log(response.data.message)
         }, function errorCallback(response) {
 
         })
@@ -420,7 +417,7 @@ angular.module('timesheet').controller('userApproveRequestCtrl', function ($scop
                 notes: timesheet.new.note
             }
         }).then(function successCallback(response) {
-            console.log(response);
+            console.log(response.data.message);
             getTimesheet()
         }, function errorCallback(response) {
 
