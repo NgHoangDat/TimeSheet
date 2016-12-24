@@ -314,7 +314,7 @@ angular.module('timesheet').controller('timesheetManageCtrl', function ($scope, 
             }
         }).then(function successCallback(response) {
             if (response.data.message.constructor != String) {
-                $scope.final_reports = response.data.message;                
+                $scope.final_reports = response.data.message;
                 $scope.final_reports.forEach((report) => {
                     report.avg_efficiency = report.avg_efficiency.toFixed(2);
                     report.employee_email = allUsers.find((e) => {
@@ -352,10 +352,10 @@ angular.module('timesheet').controller('timesheetDetailCtrl', function ($scope, 
     }).then(function successCallback(response) {
         console.log(response.data.message)
         setTimeout(function () {
-            if (response.data.message.constructor != String) 
+            if (response.data.message.constructor != String)
                 $scope.$apply(() => $scope.reports = response.data.message);
         }, 50);
-        
+
     }, function errorCallback(response) {
 
     });
@@ -372,7 +372,23 @@ angular.module('timesheet').controller('timesheetDetailCtrl', function ($scope, 
                 notes: ''
             }
         }).then(function successCallback(response) {
-            $scope.closeThisDialog();
+            $http({
+                method: 'PATCH',
+                url: '/timesheets',
+                data: {
+                    id: $scope.timesheet.id,
+                    working_hours: $scope.working_hours,
+                    efficiency: $scope.efficiency,
+                    notes: 'Admin đã duyệt'
+                }
+            }).then(function successCallback(response) {
+                console.log(response.data.message)
+                if (response.data.status == 'success') {
+                    $scope.closeThisDialog();
+                }
+            }, function errorCallback(response) {
+
+            })
         }, function errorCallback(response) {
 
         })

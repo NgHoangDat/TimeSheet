@@ -31,6 +31,7 @@
                 </div>
             </div>
             <div class="form-group clearfix" style="width:420px">
+                <span ng-hide="!isDisable">{{input.notes}}</span>
                 <button ng-hide="isDisable" class="btn btn-primary pull-right" style="margin-right:0px" type="button" ng-click="submit()">{{button}}</button>
             </div>
         </form>

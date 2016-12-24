@@ -231,7 +231,8 @@ angular.module('timesheet').controller('userTimesheetAddCtrl', function ($scope,
             var time = new Date(timeLength);
             var hour = time.getHours();
             var minute = time.getMinutes();
-            $scope.maxTime = parseFloat((hour + minute / 60).toFixed(2)) - 7;
+            var maxTime = parseFloat((hour + minute / 60).toFixed(2));
+            $scope.maxTime = (maxTime < 7) ? (maxTime + 17) : (maxTime - 7);
         }
         $scope.input.working_hours = $scope.maxTime;
     }
@@ -299,7 +300,8 @@ angular.module('timesheet').controller('userTimesheetEditCtrl', function ($scope
             var time = new Date(timeLength);
             var hour = time.getHours();
             var minute = time.getMinutes();
-            $scope.maxTime = parseFloat((hour + minute / 60).toFixed(2)) - 7;
+            var maxTime = parseFloat((hour + minute / 60).toFixed(2));
+            $scope.maxTime = (maxTime < 7) ? (maxTime + 17) : (maxTime - 7);
         }
         $scope.input.working_hours = $scope.maxTime;
     }
@@ -355,7 +357,8 @@ angular.module('timesheet').controller('userTimesheetViewCtrl', function ($scope
         end_time: new Date(new Date(0).toString().replace('07:00:00', $scope.timesheet.end_time)),
         working_hours: $scope.timesheet.working_hours,
         efficiency: $scope.timesheet.efficiency,
-        description: $scope.timesheet.description
+        description: $scope.timesheet.description,
+        notes: $scope.timesheet.notes
     }
 
 })

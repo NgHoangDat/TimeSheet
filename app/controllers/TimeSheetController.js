@@ -43,15 +43,15 @@ TimesheetController.update_timesheet = function(req, res) {
         }
 
         if (timesheet) {
-            timesheet.employee_id = req.body.employee_id;
-            timesheet.project_id = req.body.project_id;
-            timesheet.description = req.body.description;
-            timesheet.working_date = req.body.working_date;
-            timesheet.start_time = req.body.start_time;
-            timesheet.end_time = req.body.end_time;
-            timesheet.working_hours = req.body.working_hours;
-            timesheet.efficiency = req.body.efficiency;
-            timesheet.notes = req.body.notes;
+            timesheet.employee_id = (req.body.employee_id != undefined) ? req.body.employee_id : timesheet.employee_id;
+            timesheet.project_id = (req.body.project_id != undefined) ? req.body.project_id : timesheet.project_id;
+            timesheet.description = (req.body.description != undefined) ? req.body.description : timesheet.description;
+            timesheet.working_date = (req.body.working_date != undefined) ? req.body.working_date : timesheet.working_date;
+            timesheet.start_time = (req.body.start_time != undefined) ? req.body.start_time : timesheet.start_time;
+            timesheet.end_time = (req.body.end_time != undefined) ? req.body.end_time : timesheet.end_time;
+            timesheet.working_hours = (req.body.working_hours != undefined) ? req.body.working_hours : timesheet.working_hours;
+            timesheet.efficiency = (req.body.efficiency != undefined) ? req.body.efficiency : timesheet.efficiency;
+            timesheet.notes = (req.body.notes != undefined) ? req.body.notes : timesheet.notes;
 
             timesheet.save(function(err) {
                 if (err) {
