@@ -130,7 +130,8 @@ angular.module('timesheet').controller('userTimesheetCtrl', function ($scope, $h
             })
         }, function errorCallback(response) {
             console.log(response.data.message)
-        })
+        });
+        window.setTimeout(function () {}, 50);
 
     }
     getTimesheet();
@@ -158,7 +159,7 @@ angular.module('timesheet').controller('userTimesheetCtrl', function ($scope, $h
     }
 
     $scope.edit = (timesheet) => {
-        ngDialog.open({
+        var dialog = ngDialog.open({
             template: 'views/user-timesheet-detail.html',
             className: 'ngdialog-theme-default',
             width: 460,
@@ -174,6 +175,9 @@ angular.module('timesheet').controller('userTimesheetCtrl', function ($scope, $h
                 button: "Cập nhật timesheet",
                 isDisable: false
             }
+        });
+        dialog.closePromise.then(() => {
+            getTimesheet();
         })
     }
 
@@ -320,6 +324,9 @@ angular.module('timesheet').controller('userTimesheetEditCtrl', function ($scope
             }
         }).then(function successCallback(response) {
             console.log(response.data.message)
+            if (response.data.status == 'success') {
+                $scope.closeThisDialog();
+            }
         }, function errorCallback(response) {
 
         })
@@ -399,7 +406,8 @@ angular.module('timesheet').controller('userApproveRequestCtrl', function ($scop
             }
         }, function errorCallback(response) {
 
-        })
+        });
+        window.setTimeout(function() {}, 50);
 
     }
 
