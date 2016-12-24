@@ -1,6 +1,5 @@
 angular.module('timesheet').controller('userManageCtrl', function ($scope, $window, $http, $location) {
     var session = JSON.parse($window.localStorage.getItem('timesheet_user_session'))
-    $scope.users = new Array();
     var getUser = () => {
         $http({
             method: "GET",
@@ -9,11 +8,15 @@ angular.module('timesheet').controller('userManageCtrl', function ($scope, $wind
                 token: session.token
             }
         }).then(function successCallback(response) {
-            if (response.data.message.constructor != String) $scope.users = response.data.message;
+            setTimeout(function () {
+                if (response.data.message.constructor != String) $scope.$apply(() => $scope.users = response.data.message);
+                else $scope.$apply(() => $scope.users = new Array())
+            }, 50);
+
+
         }, function errorCallback(response) {
 
         });
-        window.setTimeout(function () {}, 50);
     }
     getUser()
     $scope.addNewUser = () => {
@@ -68,7 +71,6 @@ angular.module('timesheet').controller('projectManageCtrl', function ($scope, $w
     }, function errorCallback(response) {
 
     });
-    $scope.projects = new Array();
     var getAllProject = () => {
         $http({
             method: 'GET',
@@ -77,19 +79,24 @@ angular.module('timesheet').controller('projectManageCtrl', function ($scope, $w
                 token: session.token
             }
         }).then(function successCallback(response) {
-            if (response.data.message.constructor != String) $scope.projects = response.data.message;
-            $scope.projects.forEach((item) => {
-                item.leader_name = $scope.users.find((e) => {
-                    return e.id == item.leader_id
-                }).name;
-                item.leader_email = $scope.users.find((e) => {
-                    return e.id == item.leader_id
-                }).email;
-            })
+            setTimeout(function () {
+                if (response.data.message.constructor != String) {
+                    var projects = response.data.message;
+                    projects.forEach((item) => {
+                        item.leader_name = $scope.users.find((e) => {
+                            return e.id == item.leader_id
+                        }).name;
+                        item.leader_email = $scope.users.find((e) => {
+                            return e.id == item.leader_id
+                        }).email;
+                    })
+                    $scope.$apply(() => $scope.projects = projects);
+                } else $scope.$apply(() => $scope.projects = new Array());
+            }, 50);
+
         }, function errorCallback(response) {
 
         });
-        window.setTimeout(function () {}, 50);
     };
     getAllProject();
     $scope.project_description = '';
@@ -132,6 +139,7 @@ angular.module('timesheet').controller('projectManageCtrl', function ($scope, $w
             getAllProject();
         })
     };
+
 });
 
 angular.module('timesheet').controller('showProjectDetailCtrl', function ($scope, $window, $http, $location) {
@@ -155,7 +163,6 @@ angular.module('timesheet').controller('showProjectDetailCtrl', function ($scope
     }, function errorCallback(response) {
         console.log(response.data.message)
     });
-    window.setTimeout(function () {}, 50);
     $scope.addEmployee = () => {
         var next = $scope.users.find((e) => {
             return e.id == $scope.employee_id;
@@ -234,29 +241,31 @@ angular.module('timesheet').controller('timesheetManageCtrl', function ($scope, 
     }, function errorCallback(response) {
 
     });
-    window.setTimeout(function () {}, 50);
 
     var getTimesheet = () => {
         $http({
             method: 'GET',
             url: '/timesheets/get_timesheets_havent_approved_by_admin'
         }).then(function successCallback(response) {
-            if (response.data.message.constructor == String) $scope.waiting_timesheets = new Array();
-            else $scope.waiting_timesheets = response.data.message;
-            $scope.waiting_timesheets.forEach((timesheet) => {
-                timesheet.employee_name = allUsers.find((e) => {
-                    return e.id == timesheet.employee_id;
-                }).name;
-                timesheet.project_name = allProjects.find((e) => {
-                    return e.id == timesheet.project_id;
-                }).name;
-                timesheet.working_date = new Date(timesheet.working_date).toDateString()
-            })
-
+            setTimeout(function () {
+                if (response.data.message.constructor != String) {
+                    var waiting_timesheets = response.data.message;
+                    waiting_timesheets.forEach((timesheet) => {
+                        timesheet.employee_name = allUsers.find((e) => {
+                            return e.id == timesheet.employee_id;
+                        }).name;
+                        timesheet.project_name = allProjects.find((e) => {
+                            return e.id == timesheet.project_id;
+                        }).name;
+                        timesheet.working_date = new Date(timesheet.working_date).toDateString()
+                    })
+                    $scope.$apply(() => $scope.waiting_timesheets = waiting_timesheets);
+                } else $scope.$apply(() => waiting_timesheets = new Array());
+            }, 50);
         }, function errorCallback(response) {
 
         });
-        window.setTimeout(function () {}, 50);
+
 
     }
     getTimesheet();
@@ -305,14 +314,15 @@ angular.module('timesheet').controller('timesheetManageCtrl', function ($scope, 
             }
         }).then(function successCallback(response) {
             if (response.data.message.constructor != String) {
-                $scope.final_reports = response.data.message;
+                $scope.final_reports = response.data.message;                
                 $scope.final_reports.forEach((report) => {
+                    report.avg_efficiency = report.avg_efficiency.toFixed(2);
                     report.employee_email = allUsers.find((e) => {
                         return e.id == report.employee_id
                     }).email;
                 })
             }
-            window.setTimeout(function () {
+            setTimeout(function () {
                 var printContent = document.getElementById('printContent').cloneNode(true);
                 var newWindow = window.open('views/admin-output.html', '');
                 newWindow.addEventListener('load', function () {
@@ -332,6 +342,8 @@ angular.module('timesheet').controller('timesheetDetailCtrl', function ($scope, 
     $scope.timesheet = $scope.ngDialogData.timesheet;
     var allUsers = $scope.ngDialogData.allUsers;
     var admin_id = $scope.ngDialogData.admin_id;
+    $scope.working_hours = $scope.timesheet.working_hours;
+    $scope.efficiency = $scope.timesheet.efficiency;
 
     $scope.reports = new Array();
     $http({
@@ -339,11 +351,14 @@ angular.module('timesheet').controller('timesheetDetailCtrl', function ($scope, 
         url: '/approvers/get_approve_record/' + $scope.timesheet.id
     }).then(function successCallback(response) {
         console.log(response.data.message)
-        if (response.data.message.constructor != String) $scope.reports = response.data.message;
+        setTimeout(function () {
+            if (response.data.message.constructor != String) 
+                $scope.$apply(() => $scope.reports = response.data.message);
+        }, 50);
+        
     }, function errorCallback(response) {
 
     });
-    window.setTimeout(function () {}, 50);
 
     $scope.submit = () => {
         $http({
@@ -392,37 +407,42 @@ angular.module('timesheet').controller('approverManageCtrl', function ($scope, $
 
     });
 
-    $scope.approvers = new Array();
     var getAllApprover = () => {
         $http({
             method: 'GET',
             url: '/approvers/get_all_records'
         }).then(function successCallback(response) {
-            if (response.data.message.constructor != String) $scope.approvers = response.data.message;
-            $scope.approvers.forEach((approver) => {
-                var user = $scope.users.find((e) => {
-                    return e.id == approver.approver_id;
-                })
-                if (user != undefined) {
-                    approver.approver_name = user.name;
-                    approver.approver_email = user.email;
-                }
-                var user = $scope.users.find((e) => {
-                    return e.id == approver.employee_id;
-                })
-                if (user != undefined) {
-                    approver.employee_name = user.name;
-                    approver.employee_email = user.email;
-                }
-                approver.project_name = $scope.projects.find((e) => {
-                    return e.id == approver.project_id;
-                }).name;
-            })
+            setTimeout(function () {
+                if (response.data.message.constructor != String) {
+                    var approvers = response.data.message;
+                    approvers.forEach((approver) => {
+                        var user = $scope.users.find((e) => {
+                            return e.id == approver.approver_id;
+                        })
+                        if (user != undefined) {
+                            approver.approver_name = user.name;
+                            approver.approver_email = user.email;
+                        }
+                        var user = $scope.users.find((e) => {
+                            return e.id == approver.employee_id;
+                        })
+                        if (user != undefined) {
+                            approver.employee_name = user.name;
+                            approver.employee_email = user.email;
+                        }
+                        approver.project_name = $scope.projects.find((e) => {
+                            return e.id == approver.project_id;
+                        }).name;
+                    })
+                    $scope.$apply(() => $scope.approvers = approvers);
+                } else $scope.$apply(() => $scope.approvers = new Array());
+            }, 50);
+
+
 
         }, function errorCallback(response) {
             console.log(response.data.message);
         });
-        window.setTimeout(function () {}, 50);
 
     }
     getAllApprover();

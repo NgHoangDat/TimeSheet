@@ -91,7 +91,7 @@ angular.module('timesheet').controller('userTimesheetCtrl', function ($scope, $h
             token: session.token
         }
     }).then(function successCallback(response) {
-        if(response.data.message.constructor != String) $scope.allProjects = response.data.message;        
+        if (response.data.message.constructor != String) $scope.allProjects = response.data.message;
     }, function errorCallback(response) {
 
     })
@@ -106,32 +106,39 @@ angular.module('timesheet').controller('userTimesheetCtrl', function ($scope, $h
                 token: session.token
             }
         }).then(function successCallback(response) {
-            if(response.data.message.constructor != String) $scope.timesheets = response.data.message;
-            $scope.waiting_timesheets = new Array();
-            $scope.approved_timesheets = new Array();
-            for (var i in $scope.timesheets) {
-                $scope.timesheets[i].project_name = $scope.allProjects.find((e) => {
-                    return e.id == $scope.timesheets[i].project_id;
-                }).name;
-                $scope.timesheets[i].working_date = new Date($scope.timesheets[i].working_date).toDateString()
-                if ($scope.timesheets[i].is_approved) $scope.approved_timesheets.push($scope.timesheets[i]);
-                else $scope.waiting_timesheets.push($scope.timesheets[i]);
+            setTimeout(function () {
+                if (response.data.message.constructor != String) {
+                    var timesheets = response.data.message;
+                    var waiting_timesheets = new Array();
+                    var approved_timesheets = new Array();
+                    for (var i in timesheets) {
+                        timesheets[i].project_name = $scope.allProjects.find((e) => {
+                            return e.id == timesheets[i].project_id;
+                        }).name;
+                        timesheets[i].working_date = new Date(timesheets[i].working_date).toDateString()
+                        if (timesheets[i].is_approved) approved_timesheets.push(timesheets[i]);
+                        else waiting_timesheets.push(timesheets[i]);
 
-            }
-            $scope.waiting_timesheets.sort((a, b) => {
-                var d_a = Date.parse(a.working_date);
-                var d_b = Date.parse(b.working_date);
-                return d_a - d_b;
-            })
-            $scope.approved_timesheets.sort((a, b) => {
-                var d_a = Date.parse(a.working_date);
-                var d_b = Date.parse(b.working_date);
-                return d_b - d_a;
-            })
+                    }
+                    waiting_timesheets.sort((a, b) => {
+                        var d_a = Date.parse(a.working_date);
+                        var d_b = Date.parse(b.working_date);
+                        return d_a - d_b;
+                    })
+                    approved_timesheets.sort((a, b) => {
+                        var d_a = Date.parse(a.working_date);
+                        var d_b = Date.parse(b.working_date);
+                        return d_b - d_a;
+                    })
+                    $scope.$apply(() => $scope.timesheets = timesheets);
+                    $scope.$apply(() => $scope.waiting_timesheets = waiting_timesheets);
+                    $scope.$apply(() => $scope.approved_timesheets = approved_timesheets);
+                }
+            }, 50);
         }, function errorCallback(response) {
             console.log(response.data.message)
         });
-        window.setTimeout(function () {}, 50);
+
 
     }
     getTimesheet();
@@ -387,27 +394,29 @@ angular.module('timesheet').controller('userApproveRequestCtrl', function ($scop
             method: 'GET',
             url: '/get_unapprove_timesheets_by_approver_id/' + session.id
         }).then(function successCallback(response) {
-
-            if (response.data.message.constructor != String) {
-                $scope.waiting_timesheets = response.data.message;
-                $scope.waiting_timesheets.forEach((timesheet) => {
-                    timesheet.project_name = allProjects.find((e) => {
-                        return e.id == timesheet.project_id
-                    }).name;
-                    timesheet.employee_name = allUsers.find((e) => {
-                        return e.id == timesheet.employee_id
-                    }).name;
-                    timesheet.working_date = new Date(timesheet.working_date).toDateString()
-                    timesheet.new = {
-                        working_hours: timesheet.working_hours,
-                        efficiency: timesheet.efficiency
-                    }
-                })
-            }
+            setTimeout(function () {
+                if (response.data.message.constructor != String) {
+                    var waiting_timesheets = response.data.message;
+                    waiting_timesheets.forEach((timesheet) => {
+                        timesheet.project_name = allProjects.find((e) => {
+                            return e.id == timesheet.project_id
+                        }).name;
+                        timesheet.employee_name = allUsers.find((e) => {
+                            return e.id == timesheet.employee_id
+                        }).name;
+                        timesheet.working_date = new Date(timesheet.working_date).toDateString()
+                        timesheet.new = {
+                            working_hours: timesheet.working_hours,
+                            efficiency: timesheet.efficiency
+                        }
+                    })
+                    $scope.$apply(() => $scope.waiting_timesheets = waiting_timesheets);
+                }
+            }, 50);
         }, function errorCallback(response) {
 
         });
-        window.setTimeout(function() {}, 50);
+
 
     }
 
