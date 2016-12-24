@@ -48,8 +48,8 @@ ApproverController.get_all_approver = function(req, res) {
                 employee.password = undefined;
                 employee.token = undefined;
                 employee = JSON.parse(JSON.stringify(employee));
-
-                if (!(approver_id in approver_ids)) {
+                
+                if (approver_ids.indexOf(approver_id) == -1) {
                     approver_ids.push(approver_id);
                     all_approvers.push(employee);
                 }

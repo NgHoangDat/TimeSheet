@@ -23,6 +23,7 @@ module.exports = function(app){
     app.post('/admins/restore_password', AdminController.restore_password);
     app.post('/admins/assign_approver', AdminController.assign_approver);
     app.post('/admins/assign_project', AdminController.assign_project);
+    app.post('/admins/output', AdminController.output_between_two_date);
     app.get('/projects/get_all_projects', ProjectController.get_all_projects);
     app.post('/projects/get_employees', ProjectController.get_employees);
 
@@ -37,4 +38,6 @@ module.exports = function(app){
     app.get('/approvers/get_all_approvers', ApproverController.get_all_approver);
     app.get('/approvers/get_approve_record/:timesheet_id', ApproverController.get_approve_record_by_timesheet_id);
     app.get('/approvers/get_all_records', ApproverController.get_all_records);
+
+
 };
