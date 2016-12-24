@@ -98,43 +98,45 @@ angular.module('timesheet').controller('userTimesheetCtrl', function ($scope, $h
     })
 
     //Lay danh sach cac timesheet
-    $http({
-        method: 'GET',
-        url: '/timesheets/get_timesheets_by_user_id/' + session.id,
-        headers: {
-            token: session.token
-        }
-    }).then(function successCallback(response) {
-        console.log(response)
-        $scope.timesheets = response.data.message;
-        $scope.waiting_timesheets = new Array();
-        $scope.approved_timesheets = new Array();
-        for (var i in $scope.timesheets) {
-            $scope.timesheets[i].project_name = $scope.allProjects.find((e) => {
-                return e.id == $scope.timesheets[i].project_id;
-            }).name;
-            $scope.timesheets[i].working_date = new Date($scope.timesheets[i].working_date).toDateString()
-            if ($scope.timesheets[i].is_approved) $scope.approved_timesheets.push($scope.timesheets[i]);
-            else $scope.waiting_timesheets.push($scope.timesheets[i]);
+    var getTimesheet = () => {
+        $http({
+            method: 'GET',
+            url: '/timesheets/get_timesheets_by_user_id/' + session.id,
+            headers: {
+                token: session.token
+            }
+        }).then(function successCallback(response) {
+            console.log(response)
+            $scope.timesheets = response.data.message;
+            $scope.waiting_timesheets = new Array();
+            $scope.approved_timesheets = new Array();
+            for (var i in $scope.timesheets) {
+                $scope.timesheets[i].project_name = $scope.allProjects.find((e) => {
+                    return e.id == $scope.timesheets[i].project_id;
+                }).name;
+                $scope.timesheets[i].working_date = new Date($scope.timesheets[i].working_date).toDateString()
+                if ($scope.timesheets[i].is_approved) $scope.approved_timesheets.push($scope.timesheets[i]);
+                else $scope.waiting_timesheets.push($scope.timesheets[i]);
 
-        }
-        $scope.waiting_timesheets.sort((a, b) => {
-            var d_a = Date.parse(a.working_date);
-            var d_b = Date.parse(b.working_date);
-            return d_a - d_b;
+            }
+            $scope.waiting_timesheets.sort((a, b) => {
+                var d_a = Date.parse(a.working_date);
+                var d_b = Date.parse(b.working_date);
+                return d_a - d_b;
+            })
+            $scope.approved_timesheets.sort((a, b) => {
+                var d_a = Date.parse(a.working_date);
+                var d_b = Date.parse(b.working_date);
+                return d_b - d_a;
+            })
+        }, function errorCallback(response) {
+            console.log(response)
         })
-        $scope.approved_timesheets.sort((a, b) => {
-            var d_a = Date.parse(a.working_date);
-            var d_b = Date.parse(b.working_date);
-            return d_b - d_a;
-        })
-    }, function errorCallback(response) {
-        console.log(response)
-    })
 
-    //
+    }
+    getTimesheet();
     $scope.add = () => {
-        ngDialog.open({
+        var dialog = ngDialog.open({
             template: 'views/user-timesheet-detail.html',
             className: 'ngdialog-theme-default',
             width: 460,
@@ -150,6 +152,9 @@ angular.module('timesheet').controller('userTimesheetCtrl', function ($scope, $h
                 button: "Gửi timesheet",
                 isDisable: false
             }
+        })
+        dialog.closePromise.then(() => {
+            getTimesheet();
         })
     }
 
@@ -378,7 +383,7 @@ angular.module('timesheet').controller('userApproveRequestCtrl', function ($scop
             method: 'GET',
             url: '/get_unapprove_timesheets_by_approver_id/' + session.id
         }).then(function successCallback(response) {
-            
+
             if (response.data.message.constructor != String) {
                 $scope.waiting_timesheets = response.data.message;
                 $scope.waiting_timesheets.forEach((timesheet) => {
@@ -390,8 +395,8 @@ angular.module('timesheet').controller('userApproveRequestCtrl', function ($scop
                     }).name;
                     timesheet.working_date = new Date(timesheet.working_date).toDateString()
                     timesheet.new = {
-                        working_hours : timesheet.working_hours,
-                        efficiency : timesheet.efficiency
+                        working_hours: timesheet.working_hours,
+                        efficiency: timesheet.efficiency
                     }
                 })
             }
@@ -417,7 +422,7 @@ angular.module('timesheet').controller('userApproveRequestCtrl', function ($scop
         }).then(function successCallback(response) {
             console.log(response);
             getTimesheet()
-        }, function errorCallback (response) {
+        }, function errorCallback(response) {
 
         })
     }

@@ -3,7 +3,8 @@
         text-align: center
     }
     td {
-        overflow: auto
+        overflow: auto;
+        word-wrap: break-word;
     }
 </style>
 <div class="" style="padding:20px">
@@ -15,6 +16,7 @@
                     <div class="input-group-addon">Thêm dự án</div>
                     <div class="form-inline">
                         <input type="text" class="form-control" ng-model="project_name" placeholder="Tên dự án">
+                        <input type="text" class="form-control" ng-model="project_description" placeholder="Mô tả dự án">
                         <select class="form-control" ng-model="leader_id" style="width:250px">
                             <option value="" selected>Chọn trưởng dự án</option>
                             <option ng-repeat="user in users" value="{{user.id}}">{{user.name}} - {{user.email}}</option>
@@ -22,7 +24,7 @@
                     </div>
                 </div>
             </div>
-            <button type="button" class="btn" ng-click="addDetail()">Thêm chi tiết dự án</button>
+            <button style="display: none" type="button" class="btn" ng-click="addDetail()">Thêm chi tiết dự án</button>
             <button type="button" class="btn btn-primary" ng-click="addNewProject()">Submit</button>
         </form>
     </p>

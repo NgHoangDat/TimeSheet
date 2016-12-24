@@ -1,5 +1,6 @@
 angular.module('timesheet').controller('userManageCtrl', function ($scope, $window, $http, $location) {
     var session = JSON.parse($window.localStorage.getItem('timesheet_user_session'))
+    $scope.users = new Array();
     var getUser = () => {
         $http({
             method: "GET",
@@ -8,18 +9,15 @@ angular.module('timesheet').controller('userManageCtrl', function ($scope, $wind
                 token: session.token
             }
         }).then(function successCallback(response) {
-            $scope.users = response.data.message;
+            if (response.data.message.constructor != String) $scope.users = response.data.message;
         }, function errorCallback(response) {
 
         })
     }
-    getUser();
+    getUser()
     $scope.addNewUser = () => {
         if ($scope.email == undefined || $scope.password == undefined) alert('Bạn phải nhập email và mật khẩu cho người dùng mới')
         else {
-            console.log('Tao tai khoan moi')
-            console.log($scope.email)
-            console.log($scope.password)
             $http({
                 method: 'POST',
                 url: '/admins/create_account',
@@ -28,14 +26,12 @@ angular.module('timesheet').controller('userManageCtrl', function ($scope, $wind
                     password: $scope.password
                 }
             }).then(function successCallback(response) {
-                console.log('Gui yeu cau thanh cong')
-                console.log(response);
+                console.log(response.data.message);
                 getUser()
                 $scope.email = null;
                 $scope.password = null;
             }, function errorCallback(response) {
-                console.log('Gui yeu cau that bai')
-                console.log(response);
+                console.log(response.data.message);
             })
         }
     }
@@ -49,16 +45,17 @@ angular.module('timesheet').controller('userManageCtrl', function ($scope, $wind
                     new_password: user_email
                 }
             }).then(function successCallback(response) {
-                console.log(response);
+                console.log(response.data.message);
             }, function errorCallback(response) {
-                console.log(response);
+                console.log(response.data.message);
             })
         }
     }
-})
+});
 
 angular.module('timesheet').controller('projectManageCtrl', function ($scope, $window, $http, $location, ngDialog) {
-    var session = JSON.parse($window.localStorage.getItem('timesheet_user_session'))
+    var session = JSON.parse($window.localStorage.getItem('timesheet_user_session'));
+    $scope.users = new Array();
     $http({
         method: 'GET',
         url: '/employees/get_all_employees',
@@ -66,45 +63,35 @@ angular.module('timesheet').controller('projectManageCtrl', function ($scope, $w
             token: session.token
         }
     }).then(function successCallback(response) {
-        $scope.users = response.data.message
+        if (response.data.message.constructor != String) $scope.users = response.data.message
     }, function errorCallback(response) {
 
-    })
-    $http({
-        method: 'GET',
-        url: '/projects/get_all_projects',
-        headers: {
-            token: session.token
-        }
-    }).then(function successCallback(response) {
-        if (response.data.message.constructor == String) $scope.projects = new Array();
-        else $scope.projects = response.data.message;
-        $scope.projects.forEach((item) => {
-            item.leader_name = $scope.users.find((e) => {
-                return e.id == item.leader_id
-            }).name;
-            item.leader_email = $scope.users.find((e) => {
-                return e.id == item.leader_id
-            }).email;
-        })
-    }, function errorCallback(response) {
-
-    })
-    $scope.addDetail = () => {
-        ngDialog.open({
-            template: 'views/admin-manage-project-add-detail.html',
-            className: 'ngdialog-theme-default',
-            width: 690,
-            controller: 'addProjectDetailCtrl',
-            scope: $scope,
-            data: {
-                project_name: $scope.project_name,
-                leader_id: $scope.leader_id,
-                users: $scope.users,
+    });
+    $scope.projects = new Array();
+    var getAllProject = () => {
+        $http({
+            method: 'GET',
+            url: '/projects/get_all_projects',
+            headers: {
                 token: session.token
             }
-        });
-    }
+        }).then(function successCallback(response) {
+            if (response.data.message.constructor != String) $scope.projects = response.data.message;
+            $scope.projects.forEach((item) => {
+                item.leader_name = $scope.users.find((e) => {
+                    return e.id == item.leader_id
+                }).name;
+                item.leader_email = $scope.users.find((e) => {
+                    return e.id == item.leader_id
+                }).email;
+            })
+        }, function errorCallback(response) {
+
+        })
+
+    };
+    getAllProject();
+    $scope.project_description = '';
     $scope.addNewProject = () => {
         if ($scope.project_name == undefined || $scope.leader_id == undefined || $scope.project_name == '') alert('Bạn phải nhập tên dự án và tên trưởng dự án')
         else {
@@ -116,36 +103,21 @@ angular.module('timesheet').controller('projectManageCtrl', function ($scope, $w
                 },
                 data: {
                     name: $scope.project_name,
-                    description: '',
+                    description: $scope.project_description,
                     leader_id: $scope.leader_id,
                     notes: ''
                 }
             }).then(function successCallback(response) {
-                console.log(response)
-                $http({
-                    method: 'GET',
-                    url: '/projects/get_all_projects',
-                    headers: {
-                        token: session.token
-                    }
-                }).then(function successCallback(response) {
-                    $scope.projects = response.data.message;
-                    $scope.projects.forEach((item) => {
-                        item.leader_name = $scope.users.find((e) => {
-                            return e.id == item.leader_id
-                        }).name;
-                    })
-                }, function errorCallback(response) {
-
-                })
-
+                console.log(response.data.message)
+                getAllProject();
             }, function errorCallback(response) {
-                console.log(response)
+                console.log(response.data.message)
             })
         }
-    }
+    };
+
     $scope.showDetail = (project) => {
-        ngDialog.open({
+        var dialog = ngDialog.open({
             template: 'views/admin-manage-project-show-detail.html',
             className: 'ngdialog-theme-default',
             width: 690,
@@ -155,85 +127,11 @@ angular.module('timesheet').controller('projectManageCtrl', function ($scope, $w
                 users: $scope.users
             }
         });
-    }
-})
-
-angular.module('timesheet').controller('addProjectDetailCtrl', function ($scope, $window, $http, $location) {
-    $scope.project_name = $scope.ngDialogData.project_name;
-    $scope.leader_id = $scope.ngDialogData.leader_id;
-    $scope.users = $scope.ngDialogData.users;
-    $scope.project_employees = [];
-    $scope.project_description = ''
-    $scope.addEmployee = () => {
-            var next = $scope.users.find((e) => {
-                return e.id == $scope.employee_id;
-            })
-            if (next != undefined) $scope.project_employees.push(next);
-        },
-        $scope.delete = (id) => {
-            var tar = $scope.users.find((e) => {
-                return e.id == id;
-            })
-            $scope.project_employees.splice($scope.project_employees.indexOf(tar), 1)
-        }
-    $scope.addProject = () => {
-        if ($scope.project_name == undefined || $scope.leader_id == undefined || $scope.project_name == '') alert('Bạn phải nhập tên dự án và tên trưởng dự án')
-        else {
-            $http({
-                method: 'POST',
-                url: '/admins/create_project',
-                headers: {
-                    token: $scope.ngDialogData.token
-                },
-                data: {
-                    name: $scope.project_name,
-                    description: $scope.project_description,
-                    leader_id: $scope.leader_id,
-                    notes: ''
-                }
-            }).then(function successCallback(response) {
-                console.log(response)
-                $http({
-                    method: 'GET',
-                    url: '/projects/get_all_projects',
-                    headers: {
-                        token: $scope.ngDialogData.token
-                    }
-                }).then(function successCallback(response) {
-                    $scope.$parent.projects = response.data.message;
-                    $scope.$parent.projects.forEach((item) => {
-                        item.leader_name = $scope.users.find((e) => {
-                            return e.id == item.leader_id
-                        }).name;
-                    })
-                }, function errorCallback(response) {
-
-                })
-                if (response.data.status == 'success') {
-                    console.log($scope.project_employees)
-                    $scope.project_employees.forEach((e) => {
-                        $http({
-                            method: 'POST',
-                            url: '/admins/assign_project',
-                            data: {
-                                employee_id: e.id,
-                                project_id: response.data.project.id,
-                                notes: ''
-                            }
-                        }).then(function successCallback(response) {
-                            console.log(response)
-                        }, function errorCallback(response) {
-                            console.log(response)
-                        })
-                    })
-                }
-                $scope.closeThisDialog();
-            }, function errorCallback(response) {
-                console.log(response)
-            })
-        }
-    }
-})
+        dialog.closePromise.then(function () {
+            getAllProject();
+        })
+    };
+});
 
 angular.module('timesheet').controller('showProjectDetailCtrl', function ($scope, $window, $http, $location) {
     var project = $scope.ngDialogData.project;
@@ -254,7 +152,7 @@ angular.module('timesheet').controller('showProjectDetailCtrl', function ($scope
         else $scope.project_employees = response.data.message;
         console.log(response.data.message)
     }, function errorCallback(response) {
-        console.log(response)
+        console.log(response.data.message)
     })
     $scope.addEmployee = () => {
         var next = $scope.users.find((e) => {
@@ -271,24 +169,40 @@ angular.module('timesheet').controller('showProjectDetailCtrl', function ($scope
         $scope.new_project_employees.splice($scope.new_project_employees.indexOf(tar), 1)
     }
     $scope.saveChange = () => {
+        var project_id = project.id;
+        var leader_id = project.leader_id;
         $scope.new_project_employees.forEach((e) => {
+            var employee_id = e.id
             $http({
                 method: 'POST',
                 url: '/admins/assign_project',
                 data: {
-                    employee_id: e.id,
-                    project_id: project.id,
+                    employee_id: employee_id,
+                    project_id: project_id,
                     notes: ''
                 }
             }).then(function successCallback(response) {
-                console.log(response)
-                $scope.closeThisDialog('Them nhan vien');
+                console.log(response.data.message)
+                $http({
+                    method: 'POST',
+                    url: '/admins/assign_approver',
+                    data: {
+                        project_id: project_id,
+                        approver_id: leader_id,
+                        employee_id: employee_id
+                    }
+                }).then(function successCallback(response) {
+                    console.log(response.data.message)
+                }, function errorCallback(response) {
+                    console.log(response.data.message)
+                })
             }, function errorCallback(response) {
-                console.log(response)
+                console.log(response.data.message)
             })
-        })
+        });
+        $scope.closeThisDialog();
     }
-})
+});
 
 angular.module('timesheet').controller('timesheetManageCtrl', function ($scope, $window, $http, $location, ngDialog) {
     var session = JSON.parse($window.localStorage.getItem('timesheet_user_session'))
@@ -362,7 +276,58 @@ angular.module('timesheet').controller('timesheetManageCtrl', function ($scope, 
             getTimesheet();
         })
     }
-})
+    $scope.view = () => {
+
+        if ($scope.start_date === '' || $scope.end_date === '') {
+            alert('Bạn phải nhập ngày!!')
+            return false;
+        }
+        var start_date = new Date($scope.start_date);
+        start_date = start_date.getFullYear() + '-' + (start_date.getMonth() + 1) + '-' + start_date.getDate();
+        $scope.start_date_str = start_date;
+
+        var end_date = new Date($scope.end_date);
+        end_date = end_date.getFullYear() + '-' + (end_date.getMonth() + 1) + '-' + end_date.getDate();
+        $scope.end_date_str = end_date;
+
+        console.log(start_date)
+        console.log(end_date)
+
+        $http({
+            method: 'POST',
+            url: '/admins/output',
+            headers: {
+                id: session.id
+            },
+            data: {
+                start_date: start_date,
+                end_date: end_date
+            }
+        }).then(function successCallback(response) {
+            console.log(response)
+            if (response.data.message.constructor != String) {
+                $scope.final_reports = response.data.message;
+                $scope.final_reports.forEach((report) => {
+                    report.employee_email = allUsers.find((e) => {
+                        return e.id == report.employee_id
+                    }).email;
+                })
+            }
+            window.setTimeout(function () {
+                var printContent = document.getElementById('printContent').cloneNode(true);
+                var newWindow = window.open('views/admin-output.html', '');
+                newWindow.addEventListener('load', function () {
+                    newWindow.document.body.appendChild(printContent);
+                });
+                $scope.final_reports = undefined;
+            }, 500)
+        }, function errorCallback(response) {
+            console.log(response)
+        })
+
+    }
+
+});
 
 angular.module('timesheet').controller('timesheetDetailCtrl', function ($scope, $http) {
     $scope.timesheet = $scope.ngDialogData.timesheet;
@@ -397,10 +362,11 @@ angular.module('timesheet').controller('timesheetDetailCtrl', function ($scope, 
 
         })
     }
-})
+});
 
 angular.module('timesheet').controller('approverManageCtrl', function ($scope, $window, $http, $location) {
-    var session = JSON.parse($window.localStorage.getItem('timesheet_user_session'))
+    var session = JSON.parse($window.localStorage.getItem('timesheet_user_session'));
+    $scope.users = new Array();
     $http({
         method: "GET",
         url: "/employees/get_all_employees",
@@ -408,17 +374,30 @@ angular.module('timesheet').controller('approverManageCtrl', function ($scope, $
             token: session.token
         }
     }).then(function successCallback(response) {
-        $scope.users = response.data.message;
+        if (response.data.message.constructor != String) $scope.users = response.data.message;
     }, function errorCallback(response) {
 
-    })
+    });
+
+    $scope.project = new Array();
     $http({
         method: 'GET',
-        url: '/approvers/get_all_approvers'
+        url: '/projects/get_all_projects',
+        headers: {
+            token: session.token
+        }
     }).then(function successCallback(response) {
-        console.log(response)
-        if (response.data.message.constructor == String) $scope.approvers = new Array();
-        else $scope.approvers = response.data.message;
+        if (response.data.message.constructor != String) $scope.projects = response.data.message;
+    }, function errorCallback(response) {
+
+    });
+
+    $scope.approvers = new Array();
+    $http({
+        method: 'GET',
+        url: '/approvers/get_all_records'
+    }).then(function successCallback(response) {
+        if (response.data.message.constructor != String) $scope.approvers = response.data.message;
         $scope.approvers.forEach((approver) => {
             var user = $scope.users.find((e) => {
                 return e.id == approver.approver_id;
@@ -434,25 +413,17 @@ angular.module('timesheet').controller('approverManageCtrl', function ($scope, $
                 approver.employee_name = user.name;
                 approver.employee_email = user.email;
             }
-
+            approver.project_name = $scope.projects.find((e) => {
+                return e.id == approver.project_id;
+            }).name;
         })
-    }, function errorCallback(response) {
-        console.log(response);
-    })
-    $http({
-        method: 'GET',
-        url: '/projects/get_all_projects',
-        headers: {
-            token: session.token
-        }
-    }).then(function successCallback(response) {
-        if (response.data.message.constructor == String) $scope.project = new Array();
-        else $scope.projects = response.data.message;
-    }, function errorCallback(response) {
 
-    })
+    }, function errorCallback(response) {
+        console.log(response.data.message);
+    });
+
+    $scope.users = new Array();
     $scope.getUser = () => {
-        $scope.users = []
         $http({
             method: 'POST',
             url: '/projects/get_employees',
@@ -460,18 +431,18 @@ angular.module('timesheet').controller('approverManageCtrl', function ($scope, $
                 project_id: $scope.project_id
             }
         }).then(function successCallback(response) {
-            console.log(response)
-            if (response.data.message.constructor == Array) {
+            if (response.data.message.constructor != String) {
                 $scope.users = response.data.message
             }
         }, function errorCallback(response) {
-            console.log(response)
+            console.log(response.data.message)
         })
     }
     $scope.addNewApprover = () => {
-        if ($scope.approver_id == $scope.employee_id) alert('Approver và nhân viên không thể là cùng một người')
+
         if ($scope.project_id == null || $scope.approver_id == null || $scope.employee_id == null)
             alert('Không được bỏ trống các lựa chọn')
+        else if ($scope.approver_id == $scope.employee_id) alert('Approver và nhân viên không thể là cùng một người')
         else {
             $http({
                 method: 'POST',
@@ -482,10 +453,10 @@ angular.module('timesheet').controller('approverManageCtrl', function ($scope, $
                     employee_id: $scope.employee_id
                 }
             }).then(function successCallback(response) {
-                console.log(response)
+                console.log(response.data.message)
             }, function errorCallback(response) {
-                console.log(response)
+                console.log(response.data.message)
             })
         }
     }
-})
+});

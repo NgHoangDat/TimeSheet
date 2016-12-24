@@ -1,7 +1,4 @@
 <style>
-    th:nth-child(4) {
-        text-align: center
-    }
     td {
         overflow: auto
     }
@@ -37,8 +34,7 @@
             <tr>
                 <th>Dự án</th>
                 <th>Approver</th>
-                <th>Nhân viên</th>
-                <th>#</th>
+                <th>Nhân viên</th>                
             </tr>
             <tr ng-repeat="approver in approvers track by $index">
                 <td>
@@ -49,10 +45,7 @@
                 </td>
                 <td>
                     {{approver.employee_name}}-{{approver.employee_email}}
-                </td>
-                <td style="text-align: center; padding-top: 0px;align-items: center;">
-                    <a class="btn btn-link" ng-click="showDetail(approver.id)">Xem chi tiết</a>
-                </td>
+                </td>                
             </tr>
         </table>
     </div>
