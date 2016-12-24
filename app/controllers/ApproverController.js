@@ -14,7 +14,7 @@ ApproverController.approve = function(req, res) {
     newApprove.timesheet_id = req.body.timesheet_id;
     newApprove.working_hours = req.body.working_hours;
     newApprove.efficiency = req.body.efficiency;
-    newApprove.notes = req.body.efficiency;
+    newApprove.notes = req.body.notes;
 
     Approves.create(newApprove, function(err, approve) {
         if (err) {

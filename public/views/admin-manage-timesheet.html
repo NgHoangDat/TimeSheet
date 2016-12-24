@@ -12,7 +12,7 @@
     }
     
     th:nth-child(4) {
-        width: 120px;
+        width: 120px;        
     }
     
     th:nth-child(5) {
@@ -20,7 +20,7 @@
     }
     
     th:nth-child(6) {
-        width: 80px;
+        width: 80px;        
     }
     
     th:nth-child(7) {
@@ -31,6 +31,13 @@
     td {
         overflow: auto;
     }
+    td:nth-child(4) {
+        text-align: center;
+    }
+    td:nth-child(6) {
+        text-align: center;
+    }
+    
 </style>
 <div style="position:relative;height:100vh;left:2%;max-width: 1000px">
     <div style="margin-bottom:10px">
@@ -47,13 +54,13 @@
             </tr>
             <tr ng-repeat="timesheet in waiting_timesheets">
                 <td>
-                    {{timesheet.employeeName}}
+                    {{timesheet.employee_name}}
                 </td>
                 <td>
                     {{timesheet.working_date}}
                 </td>
                 <td>
-                    {{timesheet.project}}
+                    {{timesheet.project_name}}
                 </td>
                 <td>
                     {{timesheet.working_hours}}
@@ -64,7 +71,7 @@
                 <td>
                     {{timesheet.efficiency}}
                 </td>
-                <td style="text-align: center; padding-top: 0px;align-items: center; display: flex">
+                <td style="text-align: center; padding-top: 0px;align-items: center;">
                     <a class="btn btn-link" ng-click="approve(timesheet)">Duyệt timesheet</a>
                 </td>
             </tr>

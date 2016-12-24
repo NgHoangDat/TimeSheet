@@ -88,7 +88,7 @@ TimesheetController.get_timesheets_by_user_id = function(req, res) {
                     if (approves.length == 0) {
                         timesheet.is_approved = false;
                     } else {
-                        timesheet.id_approved = true;
+                        timesheet.is_approved = true;
                     }
 
                     timesheet = JSON.parse(JSON.stringify(timesheet));

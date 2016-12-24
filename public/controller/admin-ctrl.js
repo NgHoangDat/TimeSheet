@@ -290,19 +290,113 @@ angular.module('timesheet').controller('showProjectDetailCtrl', function ($scope
     }
 })
 
-angular.module('timesheet').controller('timesheetManageCtrl', function ($scope, $window, $http, $location) {
+angular.module('timesheet').controller('timesheetManageCtrl', function ($scope, $window, $http, $location, ngDialog) {
     var session = JSON.parse($window.localStorage.getItem('timesheet_user_session'))
+
+    var allUsers = new Array()
     $http({
-        method : 'GET',
-        url : '/timesheets/get_timesheets_havent_approved_by_admin'
-    }).then ( function successCallback (response) {
-        if (response.data.message.constructor == String) $scope.waiting_timesheets = new Array();
-        else $scope.waiting_timesheets = response.data.message;
-    }, function errorCallback (response) {
+        method: "GET",
+        url: "/employees/get_all_employees",
+        headers: {
+            token: session.token
+        }
+    }).then(function successCallback(response) {
+        if (response.data.message.constructor != String) allUsers = response.data.message;
+    }, function errorCallback(response) {
 
     })
-    
 
+    var allProjects = new Array();
+    $http({
+        method: 'GET',
+        url: '/projects/get_all_projects',
+        headers: {
+            token: session.token
+        }
+    }).then(function successCallback(response) {
+        if (response.data.message.constructor != String) allProjects = response.data.message;
+    }, function errorCallback(response) {
+
+    })
+
+
+    var getTimesheet = () => {
+        $http({
+            method: 'GET',
+            url: '/timesheets/get_timesheets_havent_approved_by_admin'
+        }).then(function successCallback(response) {
+            if (response.data.message.constructor == String) $scope.waiting_timesheets = new Array();
+            else $scope.waiting_timesheets = response.data.message;
+            $scope.waiting_timesheets.forEach((timesheet) => {
+                timesheet.employee_name = allUsers.find((e) => {
+                    return e.id == timesheet.employee_id;
+                }).name;
+                timesheet.project_name = allProjects.find((e) => {
+                    return e.id == timesheet.project_id;
+                }).name;
+                timesheet.working_date = new Date(timesheet.working_date).toDateString()
+            })
+
+        }, function errorCallback(response) {
+
+        })
+
+    }
+    getTimesheet();
+    $scope.approve = (timesheet) => {
+        var dialog = ngDialog.open({
+            template: 'views/admin-manage-timesheet-detail.html',
+            className: 'ngdialog-theme-default',
+            width: 690,
+            height: 500,
+            controller: 'timesheetDetailCtrl',
+            scope: $scope,
+            data: {
+                token: session.token,
+                timesheet: timesheet,
+                users: allUsers,
+                admin_id: session.id
+            }
+        });
+        dialog.closePromise.then(function (data) {
+            getTimesheet();
+        })
+    }
+})
+
+angular.module('timesheet').controller('timesheetDetailCtrl', function ($scope, $http) {
+    $scope.timesheet = $scope.ngDialogData.timesheet;
+    var allUsers = $scope.ngDialogData.allUsers;
+    var admin_id = $scope.ngDialogData.admin_id;
+
+    $scope.reports = new Array();
+    $http({
+        method: 'GET',
+        url: '/approvers/get_approve_record/' + $scope.timesheet.id
+    }).then(function successCallback(response) {
+        console.log(response.data.message)
+        if (response.data.message.constructor != String) $scope.reports = response.data.message;
+    }, function errorCallback(response) {
+
+    })
+
+    $scope.submit = () => {
+        $http({
+            method: 'POST',
+            url: '/approvers/approve',
+            data: {
+                approver_id: admin_id,
+                timesheet_id: $scope.timesheet.id,
+                working_hours: $scope.working_hours,
+                efficiency: $scope.efficiency,
+                notes: ''
+            }
+        }).then(function successCallback(response) {
+            $scope.closeThisDialog();
+        }, function errorCallback(response) {
+
+        })
+    }
 })
 
 angular.module('timesheet').controller('approverManageCtrl', function ($scope, $window, $http, $location) {
@@ -340,7 +434,7 @@ angular.module('timesheet').controller('approverManageCtrl', function ($scope, $
                 approver.employee_name = user.name;
                 approver.employee_email = user.email;
             }
-             
+
         })
     }, function errorCallback(response) {
         console.log(response);
