@@ -67,8 +67,10 @@ angular.module('timesheet').controller('projectManageCtrl', function ($scope, $w
                 }
             }).then(function successCallback(response) {
                 if (response.data.message.constructor != String) resolve(response.data.message);
-                else reject();
-            }, function errorCallback(response) {});
+                else resolve(new Array());
+            }, function errorCallback(response) {
+                reject(response.data.message);
+            });
 
         })
     }
@@ -81,15 +83,13 @@ angular.module('timesheet').controller('projectManageCtrl', function ($scope, $w
                     token: session.token
                 }
             }).then(function successCallback(response) {
-                if (response.data.message.constructor != String) {
-                    resolve(response.data.message);
-                } else reject();
-
+                if (response.data.message.constructor != String) resolve(response.data.message);
+                else resolve(new Array());
             }, function errorCallback(response) {
-
+                reject(response.data.message);
             });
         });
-    }
+    };
     var updateProject = (value) => {
         var [users, projects] = value;
         projects.forEach((item) => {
@@ -100,12 +100,12 @@ angular.module('timesheet').controller('projectManageCtrl', function ($scope, $w
                 return e.id == item.leader_id
             }).email;
         });
-        $scope.users = users;
-        $scope.projects = projects;
+        $scope.$evalAsync(() => {
+            $scope.users = users;
+            $scope.projects = projects;
+        })
     };
-    Promise.all([getUser(), getAllProject()]).then(value => {
-        $scope.$evalAsync(() => updateProject(value))
-    });
+    Promise.all([getUser(), getAllProject()]).then(value => updateProject(value));
     $scope.project_description = '';
     $scope.addNewProject = () => {
         if ($scope.project_name == undefined || $scope.leader_id == undefined || $scope.project_name == '') alert('Bạn phải nhập tên dự án và tên trưởng dự án')
@@ -124,7 +124,7 @@ angular.module('timesheet').controller('projectManageCtrl', function ($scope, $w
                 }
             }).then(function successCallback(response) {
                 console.log(response.data.message);
-                getAllProject().then(projects => $scope.$evalAsync(updateProject([$scope.users, projects])));
+                getAllProject().then(projects => updateProject([$scope.users, projects]));
             }, function errorCallback(response) {
                 console.log(response.data.message)
             })
@@ -164,7 +164,7 @@ angular.module('timesheet').controller('showProjectDetailCtrl', function ($scope
                 project_id: project.id
             }
         }).then(function successCallback(response) {
-            if (response.data.message == 'Not found any employees!') $scope.project_employees = []
+            if (response.data.message.constructor == String) $scope.project_employees = [];
             else $scope.project_employees = response.data.message;
             console.log(response.data.message)
         }, function errorCallback(response) {
@@ -271,7 +271,7 @@ angular.module('timesheet').controller('timesheetManageCtrl', function ($scope, 
             });
         })
     };
-    var updateDatas = (allUsers, allProjects, waiting_timesheets) => {
+    var updateData = (allUsers, allProjects, waiting_timesheets) => {
         _allUsers = allUsers;
         _allProjects = allProjects;
         waiting_timesheets.forEach((timesheet) => {
@@ -287,7 +287,7 @@ angular.module('timesheet').controller('timesheetManageCtrl', function ($scope, 
     };
     Promise.all([getAllUsers(), getAllProjects(), getAllTimesheets()]).then(value => {
         var [allUsers, allProjects, waiting_timesheets] = value;
-        updateDatas(allUsers, allProjects, waiting_timesheets);
+        updateData(allUsers, allProjects, waiting_timesheets);
     });
     $scope.approve = (timesheet) => {
         var dialog = ngDialog.open({
@@ -305,8 +305,8 @@ angular.module('timesheet').controller('timesheetManageCtrl', function ($scope, 
             }
         });
         dialog.closePromise.then(function (data) {
-            getAllTimesheets().then(timesheets => updateTimesheets(_allUsers, _allProjects, timesheets));
-        })
+            getAllTimesheets().then(timesheets => updateData(_allUsers, _allProjects, timesheets));
+        });
     }
     $scope.view = () => {
 
@@ -365,7 +365,7 @@ angular.module('timesheet').controller('timesheetDetailCtrl', function ($scope, 
     $scope.working_hours = $scope.timesheet.working_hours;
     $scope.efficiency = $scope.timesheet.efficiency;
 
-    $scope.reports = new Promise(function (resolve, reject) {
+    new Promise(function (resolve, reject) {
         $http({
             method: 'GET',
             url: '/approvers/get_approve_record/' + $scope.timesheet.id
@@ -379,7 +379,9 @@ angular.module('timesheet').controller('timesheetDetailCtrl', function ($scope, 
         }, function errorCallback(response) {
 
         });
-    }).then(() => $scope.$evalAsync());
+    }).then(value => $scope.$evalAsync(function () {
+        $scope.reports = value;
+    }));
 
     $scope.submit = () => {
         $http({
@@ -491,10 +493,26 @@ angular.module('timesheet').controller('approverManageCtrl', function ($scope, $
             $scope.projects = projects;
             $scope.approvers = approvers;
         })
-    }
+    };
     Promise.all([getAllUsers(), getAllProjects(), getAllApprovers()]).then(value => {
         var [allUsers, allProjects, allApprovers] = value;
         updateDatas(allUsers, allProjects, allApprovers);
+    });
+    $scope.$watch('project_id', () => {
+        $http({
+            method: 'POST',
+            url: '/projects/get_employees',
+            data: {
+                project_id: $scope.project_id
+            }
+        }).then(function successCallback(response) {
+            $scope.$evalAsync(() => {
+                if (response.data.message.constructor != String) $scope.project_users = response.data.message;
+                else $scope.project_users = new Array();
+            })
+        }, function errorCallback(response) {
+            console.log(response.data.message)
+        });
     });
     $scope.addNewApprover = () => {
         if ($scope.project_id == null || $scope.approver_id == null || $scope.employee_id == null)

@@ -17,11 +17,11 @@
                         </select>
                         <select class="form-control" ng-model="approver_id" style="width:200px">
                             <option value="" selected>Chọn approver</option>
-                            <option ng-repeat="user in users track by $index" value="{{user.id}}">{{user.name}}-{{user.email}}</option>
+                            <option ng-repeat="user in project_users track by $index" value="{{user.id}}">{{user.name}}-{{user.email}}</option>
                         </select>
                         <select class="form-control" ng-model="employee_id" style="width:200px">
                             <option value="" selected>Chọn nhân viên</option>
-                            <option ng-repeat="user in users track by $index" value="{{user.id}}">{{user.name}}-{{user.email}}</option>
+                            <option ng-repeat="user in project_users track by $index" value="{{user.id}}">{{user.name}}-{{user.email}}</option>
                         </select>
                     </div>
                 </div>
