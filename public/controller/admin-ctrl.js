@@ -370,14 +370,13 @@ angular.module('timesheet').controller('timesheetDetailCtrl', function ($scope, 
             method: 'GET',
             url: '/approvers/get_approve_record/' + $scope.timesheet.id
         }).then(function successCallback(response) {
-            console.log(response.data.message)
             $scope.$evalAsync(function () {
                 if (response.data.message.constructor != String) resolve(response.data.message);
                 else resolve(new Array());
             });
 
         }, function errorCallback(response) {
-
+            console.log(response.data.message);
         });
     }).then(value => $scope.$evalAsync(function () {
         $scope.reports = value;

@@ -455,8 +455,8 @@ angular.module('timesheet').controller('userApproveRequestCtrl', function ($scop
             console.log(response.data.message);
             getTimesheet().then(timesheets => updateData(timesheets));
         }, function errorCallback(response) {
-
-        })
+            console.log(response.data.message);
+        });
     }
 
 })

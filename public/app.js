@@ -164,7 +164,6 @@ angular.module('timesheet').controller('logCtrl', function ($scope, $http, $loca
                 "password": $scope.password
             }
         }).then(function successCallback(response) {
-            console.log(response);
             if (response.data.message.constructor != Object) {
                 alert(response.data.message);
                 $scope.email = '';
@@ -203,7 +202,7 @@ angular.module('timesheet').controller('logCtrl', function ($scope, $http, $loca
                     token : session.token
                 } 
             }).then ( function successCallback (response) {
-                console.log(response)
+                console.log(response.data.message)
                 $window.localStorage.removeItem(session_name)
                 $rootScope.type = null
                 $location.path('/login')
