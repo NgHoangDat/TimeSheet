@@ -1,7 +1,6 @@
 var app = angular.module('timesheet', ['ngRoute', 'ngDialog']);
 const session_name = 'timesheet_user_session';
 
-
 function checkType($window, $location, $rootScope, type) {
     var session = JSON.parse($window.localStorage.getItem(session_name));
     if (session == null) $location.path('/login');
@@ -17,7 +16,7 @@ app.config(["ngDialogProvider", function (ngDialogProvider) {
         closeByEscape: true,
         appendTo: false,
         preCloseCallback: function () {
-            console.log("default pre-close callback");
+            console.log("closing dialog");
         }
     });
 }]);

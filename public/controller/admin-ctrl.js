@@ -1,4 +1,4 @@
-angular.module('timesheet').controller('userManageCtrl', function ($scope, $window, $http, $location) {
+angular.module('timesheet').controller('userManageCtrl', function ($scope, $window, $http) {
     var session = JSON.parse($window.localStorage.getItem('timesheet_user_session'))
     var getUser = () => {
         $http({
@@ -55,7 +55,7 @@ angular.module('timesheet').controller('userManageCtrl', function ($scope, $wind
     }
 });
 
-angular.module('timesheet').controller('projectManageCtrl', function ($scope, $window, $http, $location, ngDialog) {
+angular.module('timesheet').controller('projectManageCtrl', function ($scope, $window, $http, ngDialog) {
     var session = JSON.parse($window.localStorage.getItem('timesheet_user_session'));
     var getUser = () => {
         return new Promise(function (resolve, reject) {
@@ -148,7 +148,7 @@ angular.module('timesheet').controller('projectManageCtrl', function ($scope, $w
     };
 });
 
-angular.module('timesheet').controller('showProjectDetailCtrl', function ($scope, $window, $http, $location) {
+angular.module('timesheet').controller('showProjectDetailCtrl', function ($scope, $window, $http) {
     var project = $scope.ngDialogData.project;
     $scope.project_name = project.name;
     $scope.project_description = project.description;
@@ -221,7 +221,7 @@ angular.module('timesheet').controller('showProjectDetailCtrl', function ($scope
     }
 });
 
-angular.module('timesheet').controller('timesheetManageCtrl', function ($scope, $window, $http, $location, $timeout, ngDialog) {
+angular.module('timesheet').controller('timesheetManageCtrl', function ($scope, $window, $http, $timeout, ngDialog) {
     var session = JSON.parse($window.localStorage.getItem('timesheet_user_session'));
     var _allUsers = new Array();
     var _allProjects = new Array();
@@ -358,7 +358,7 @@ angular.module('timesheet').controller('timesheetManageCtrl', function ($scope, 
 
 });
 
-angular.module('timesheet').controller('timesheetDetailCtrl', function ($scope, $http, $timeout) {
+angular.module('timesheet').controller('timesheetDetailCtrl', function ($scope, $http) {
     $scope.timesheet = $scope.ngDialogData.timesheet;
     var allUsers = $scope.ngDialogData.allUsers;
     var admin_id = $scope.ngDialogData.admin_id;
@@ -371,7 +371,7 @@ angular.module('timesheet').controller('timesheetDetailCtrl', function ($scope, 
             url: '/approvers/get_approve_record/' + $scope.timesheet.id
         }).then(function successCallback(response) {
             console.log(response.data.message)
-            $timeout(function () {
+            $scope.$evalAsync(function () {
                 if (response.data.message.constructor != String) resolve(response.data.message);
                 else resolve(new Array());
             });
@@ -416,7 +416,7 @@ angular.module('timesheet').controller('timesheetDetailCtrl', function ($scope, 
     }
 });
 
-angular.module('timesheet').controller('approverManageCtrl', function ($scope, $window, $http, $timeout, $location) {
+angular.module('timesheet').controller('approverManageCtrl', function ($scope, $window, $http) {
     var session = JSON.parse($window.localStorage.getItem('timesheet_user_session'));
     var getAllUsers = () => {
         return new Promise(function (resolve, reject) {
