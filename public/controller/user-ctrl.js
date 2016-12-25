@@ -321,7 +321,6 @@ angular.module('timesheet').controller('userTimesheetEditCtrl', function ($scope
             },
             data: {
                 id: $scope.timesheet.id,
-                employee_id: session.id,
                 project_id: $scope.input.project_id,
                 description: $scope.input.description,
                 working_date: working_date,
