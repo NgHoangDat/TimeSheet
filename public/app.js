@@ -215,6 +215,6 @@ angular.module('timesheet').controller('logCtrl', function ($scope, $http, $loca
     }
 })
 
-angular.module('timesheet').controller('sidebarCtrl', function ($scope, $http, $window, $location, $rootScope) {
+angular.module('timesheet').controller('mainCtrl', function ($rootScope, $interval) {
     
 })

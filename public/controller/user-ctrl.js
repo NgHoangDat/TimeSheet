@@ -79,7 +79,7 @@ angular.module('timesheet').controller('userInfoCtrl', function ($scope, $http, 
     }
 })
 
-angular.module('timesheet').controller('userTimesheetCtrl', function ($scope, $http, $window, $location, ngDialog) {
+angular.module('timesheet').controller('userTimesheetCtrl', function ($scope, $http, $window, $location, $timeout, ngDialog) {
     var session = JSON.parse($window.localStorage.getItem('timesheet_user_session'))
 
     //Lay danh sach cac du an
@@ -106,7 +106,7 @@ angular.module('timesheet').controller('userTimesheetCtrl', function ($scope, $h
                 token: session.token
             }
         }).then(function successCallback(response) {
-            setTimeout(function () {
+            $timeout(function () {
                 if (response.data.message.constructor != String) {
                     var timesheets = response.data.message;
                     var waiting_timesheets = new Array();
@@ -130,11 +130,11 @@ angular.module('timesheet').controller('userTimesheetCtrl', function ($scope, $h
                         var d_b = Date.parse(b.working_date);
                         return d_b - d_a;
                     })
-                    $scope.$apply(() => $scope.timesheets = timesheets);
-                    $scope.$apply(() => $scope.waiting_timesheets = waiting_timesheets);
-                    $scope.$apply(() => $scope.approved_timesheets = approved_timesheets);
+                    $scope.timesheets = timesheets;
+                    $scope.waiting_timesheets = waiting_timesheets;
+                    $scope.approved_timesheets = approved_timesheets;
                 }
-            }, 50);
+            });
         }, function errorCallback(response) {
             console.log(response.data.message)
         });
@@ -362,7 +362,7 @@ angular.module('timesheet').controller('userTimesheetViewCtrl', function ($scope
 
 })
 
-angular.module('timesheet').controller('userApproveRequestCtrl', function ($scope, $window, $http, $location, ngDialog) {
+angular.module('timesheet').controller('userApproveRequestCtrl', function ($scope, $window, $http, $location, $timeout, ngDialog) {
     var session = JSON.parse($window.localStorage.getItem('timesheet_user_session'));
 
     var allProjects = new Array();
@@ -396,7 +396,7 @@ angular.module('timesheet').controller('userApproveRequestCtrl', function ($scop
             method: 'GET',
             url: '/get_unapprove_timesheets_by_approver_id/' + session.id
         }).then(function successCallback(response) {
-            setTimeout(function () {
+            $timeout(function () {
                 if (response.data.message.constructor != String) {
                     var waiting_timesheets = response.data.message;
                     waiting_timesheets.forEach((timesheet) => {
@@ -412,9 +412,9 @@ angular.module('timesheet').controller('userApproveRequestCtrl', function ($scop
                             efficiency: timesheet.efficiency
                         }
                     })
-                    $scope.$apply(() => $scope.waiting_timesheets = waiting_timesheets);
+                    $scope.waiting_timesheets = waiting_timesheets;
                 }
-            }, 50);
+            });
         }, function errorCallback(response) {
 
         });
