@@ -334,12 +334,14 @@ angular.module('timesheet').controller('timesheetManageCtrl', function ($scope, 
             }
         }).then(function successCallback(response) {
             if (response.data.message.constructor != String) {
-                $scope.final_reports = response.data.message;
-                $scope.final_reports.forEach((report) => {
-                    report.avg_efficiency = report.avg_efficiency.toFixed(2);
-                    report.employee_email = _allUsers.find((e) => {
-                        return e.id == report.employee_id
-                    }).email;
+                $scope.$evalAsync(() => {
+                    $scope.final_reports = response.data.message;
+                    $scope.final_reports.forEach((report) => {
+                        report.avg_efficiency = report.avg_efficiency.toFixed(2);
+                        report.employee_email = _allUsers.find((e) => {
+                            return e.id == report.employee_id
+                        }).email;
+                    });
                 })
             }
             $timeout(function () {
