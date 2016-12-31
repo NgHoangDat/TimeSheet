@@ -47,7 +47,7 @@ angular.module('timesheet').controller('userManageCtrl', function ($scope, $wind
                     new_password: user_email
                 }
             }).then(function successCallback(response) {
-                console.log(response.data.message);
+                alert(response.data.message);
             }, function errorCallback(response) {
                 console.log(response.data.message);
             })

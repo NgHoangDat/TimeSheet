@@ -78,7 +78,7 @@ angular.module('timesheet').controller('userInfoCtrl', function ($scope, $http, 
                 "new_password": $scope.new
             }
         }).then(function successCallback(response) {
-            console.log(response.data.message);
+            alert(response.data.message);
         }, function errorCallback(response) {
             console.log(response.data.message);
         })
