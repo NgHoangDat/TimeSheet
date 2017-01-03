@@ -64,13 +64,13 @@
                     {{timesheet.project_name}}
                 </td>
                 <td>
-                    <input type="number" ng-model="timesheet.new.working_hours" min="0" max="{{timesheet.working_hours}}">
+                    <input type="number" ng-model="timesheet.new.working_hours" min="0" max="{{timesheet.working_hours}}" step="0.1">
                 </td>
                 <td>
                     {{timesheet.description}}
                 </td>
                 <td>
-                    <input type="number"  ng-model="timesheet.new.efficiency" min="0" max="{{timesheet.efficiency}}">
+                    <input type="number"  ng-model="timesheet.new.efficiency" min="0" max="{{timesheet.efficiency}}" step="0.01">
                 </td>
                 <td style="text-align: center; padding-top: 6px;align-items: center;">
                     <a class="btn btn-link" style="padding: 0px" ng-click="approve(timesheet)">Duyệt</a>   

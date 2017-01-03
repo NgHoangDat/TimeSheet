@@ -53,7 +53,7 @@ angular.module('timesheet')
     })
     .controller('userInfoCtrl', function ($scope, $http, $window) {
         //Gui request de lay thong tin ng dung
-        var session = JSON.parse($window.localStorage.getItem('timesheet_user_session'));
+        var session = JSON.parse($window.localStorage.getItem(session_name));
         var ori_info = {}; //luu thong tin goc
         $scope.info = {};
         var getInfo = () => {
@@ -138,7 +138,7 @@ angular.module('timesheet')
         }
     })
     .controller('userTimesheetCtrl', function ($scope, $http, $window, ngDialog, userService) {
-        var session = JSON.parse($window.localStorage.getItem('timesheet_user_session'))
+        var session = JSON.parse($window.localStorage.getItem(session_name))
 
         //Lay danh sach cac du an
         var updateData = (projects, timesheets) => {
@@ -240,7 +240,7 @@ angular.module('timesheet')
 
     })
     .controller('userTimesheetAddCtrl', function ($scope, $window, $http) {
-        var session = JSON.parse($window.localStorage.getItem('timesheet_user_session'))
+        var session = JSON.parse($window.localStorage.getItem(session_name))
         $scope.projects = $scope.ngDialogData.projects;
         $scope.header = $scope.ngDialogData.header;
         $scope.button = $scope.ngDialogData.button;
@@ -307,7 +307,7 @@ angular.module('timesheet')
     })
     .controller('userTimesheetEditCtrl', function ($scope, $window, $http) {
 
-        var session = JSON.parse($window.localStorage.getItem('timesheet_user_session'))
+        var session = JSON.parse($window.localStorage.getItem(session_name))
         $scope.projects = $scope.ngDialogData.projects;
         $scope.header = $scope.ngDialogData.header;
         $scope.button = $scope.ngDialogData.button;
@@ -392,7 +392,7 @@ angular.module('timesheet')
 
     })
     .controller('userApproveRequestCtrl', function ($scope, $window, $http, ngDialog, userService) {
-        var session = JSON.parse($window.localStorage.getItem('timesheet_user_session'));
+        var session = JSON.parse($window.localStorage.getItem(session_name));
         var allProjects = [];
         var allUsers = [];
         var getTimesheet = () => {

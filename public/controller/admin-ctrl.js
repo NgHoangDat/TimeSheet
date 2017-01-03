@@ -82,7 +82,7 @@ angular.module('timesheet')
         }
     })
     .controller('userManageCtrl', function ($scope, $window, $http, adminService) {
-        let session = JSON.parse($window.localStorage.getItem('timesheet_user_session'))
+        let session = JSON.parse($window.localStorage.getItem(session_name))
         adminService.getAllUsers(session.token)
             .then(function (value) {
                 $scope.$evalAsync(() => $scope.users = value);
@@ -134,7 +134,7 @@ angular.module('timesheet')
         }
     })
     .controller('projectManageCtrl', function ($scope, $window, $http, ngDialog, adminService) {
-        let session = JSON.parse($window.localStorage.getItem('timesheet_user_session'))
+        let session = JSON.parse($window.localStorage.getItem(session_name))
         var updateProject = (value) => {
             var [users, projects] = value;
             projects.forEach((item) => {
@@ -193,7 +193,7 @@ angular.module('timesheet')
         };
     })
     .controller('showProjectDetailCtrl', function ($scope, $window, $http, adminService) {
-        let session = JSON.parse($window.localStorage.getItem('timesheet_user_session'))
+        let session = JSON.parse($window.localStorage.getItem(session_name))
         var project = $scope.ngDialogData.project;
         $scope.project_name = project.name;
         $scope.project_description = project.description;
@@ -258,7 +258,7 @@ angular.module('timesheet')
         }
     })
     .controller('timesheetManageCtrl', function ($scope, $window, $http, $timeout, ngDialog, adminService) {
-        let session = JSON.parse($window.localStorage.getItem('timesheet_user_session'))
+        let session = JSON.parse($window.localStorage.getItem(session_name))
         var _allUsers = new Array();
         var _allProjects = new Array();
         var updateData = (allUsers, allProjects, waiting_timesheets) => {
@@ -409,7 +409,7 @@ angular.module('timesheet')
         }
     })
     .controller('approverManageCtrl', function ($scope, $window, $http, adminService) {
-        let session = JSON.parse($window.localStorage.getItem('timesheet_user_session'))
+        let session = JSON.parse($window.localStorage.getItem(session_name))
         var getAllApprovers = () => {
             return new Promise(function (resolve, reject) {
                 $http({
